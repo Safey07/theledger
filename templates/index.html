@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block body %}
+<p class="meta">{{ today_label }}</p>
+<h1>Today's fragrance price drops</h1>
+<p class="lede">Every morning we check thousands of fragrance prices across UK retailers. These are the ones selling well below their usual price.</p>
+{% if drops %}
+<div class="grid">{% for d in drops %}{% include "_card.html" %}{% endfor %}</div>
+{% else %}
+<p class="empty">No significant drops today. Check back tomorrow.</p>
+{% endif %}
+<section class="signup">
+  <div><h2>Get the drops by email</h2><p class="lede" style="margin:4px 0 0">One short email each morning. Unsubscribe any time.</p></div>
+  <form action="{{ signup_action }}" method="post" target="_blank">
+    <input type="email" name="email" placeholder="you@example.com" required aria-label="Email address">
+    <button type="submit">Subscribe</button>
+  </form>
+</section>
+{% if recent %}
+<h2>Still on sale this week</h2>
+<div class="grid">{% for d in recent %}{% include "_card.html" %}{% endfor %}</div>
+{% endif %}
+{% endblock %}
