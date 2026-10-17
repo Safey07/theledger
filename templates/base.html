@@ -70,7 +70,7 @@ footer .links a{margin-right:16px;color:var(--muted)}
 <footer><div class="wrap">
 Prices update daily and can change at any time. {{ site.name }} earns a commission when you buy through links on this site, at no extra cost to you.
 Last updated {{ updated }}.
-<p class="links"><a href="{{ root }}about.html">About</a><a href="{{ root }}how-we-track-prices.html">How we track prices</a><a href="{{ root }}guides.html">Guides</a><a href="{{ root }}contact.html">Contact</a></p>
+<p class="links"><a href="{{ root }}about.html">About</a><a href="{{ root }}how-we-track-prices.html">How we track prices</a><a href="{{ root }}guides.html">Guides</a><a href="{{ root }}contact.html">Contact</a>{% if site.instagram %}<a href="https://www.instagram.com/{{ site.instagram }}/" rel="noopener" target="_blank">Instagram @{{ site.instagram }}</a>{% endif %}</p>
 </div></footer>
 </body>
 </html>
