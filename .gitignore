@@ -1,0 +1,4 @@
+output/
+data/demo.db
+sample_data/
+__pycache__/
