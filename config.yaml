@@ -7,6 +7,7 @@ site:
   base_url: "https://safey07.github.io/theledger"
   currency_symbol: "£"
   market: "UK"
+  contact_email: ""          # add a dedicated inbox, e.g. hello@yourdomain
 
 # Rules for what counts as a drop worth publishing
 detection:
