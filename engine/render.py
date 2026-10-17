@@ -59,6 +59,9 @@ def build_site(db, cfg, day, drops, out_dir, demo=False):
     sym = site["currency_symbol"]
     if os.path.exists(out_dir):
         shutil.rmtree(out_dir)
+    static = os.path.join(HERE, "static")   # verification files, favicon, etc.
+    if os.path.isdir(static):
+        shutil.copytree(static, out_dir)
     common = {"site": site, "updated": day, "demo": demo,
               "signup_action": cfg.get("signup_action", "#")}
 
