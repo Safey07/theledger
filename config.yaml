@@ -1,0 +1,35 @@
+# The Ledger: automated fragrance price-drop tracker
+# Edit this file, not the code.
+
+site:
+  name: "The Ledger"
+  tagline: "Designer and niche fragrance price drops, checked every morning."
+  base_url: "https://safey07.github.io/theledger"
+  currency_symbol: "£"
+  market: "UK"
+
+# Rules for what counts as a drop worth publishing
+detection:
+  min_drop_pct: 10          # vs the item's own 30-day median price
+  min_drop_abs: 5           # ignore tiny drops (in currency units)
+  history_days: 30
+  max_digest_items: 12      # items in the daily email
+  max_social_cards: 3       # image cards generated per day
+
+# Product feeds. Each one is a CSV in Awin's product-feed format.
+# url can use ${ENV_VAR} so keys never live in the repo.
+# In demo mode the engine reads sample_data/ instead.
+feeds:
+  - name: "awin_main"
+    url: "${AWIN_FEED_URL}"
+    format: "awin"
+
+# Only keep products whose category or name matches these words
+filters:
+  include_keywords: ["fragrance", "perfume", "parfum", "eau de", "cologne", "edp", "edt"]
+  exclude_keywords: ["sample", "tester", "body lotion", "shower gel", "deodorant"]
+
+# Email digest. Leave provider as "none" to only write the HTML file.
+email:
+  provider: "none"          # "buttondown" once you have an account
+  api_key_env: "BUTTONDOWN_API_KEY"
