@@ -7,6 +7,10 @@ We'd like to hear from you, whether it's a question, a price that looks wrong, o
 
 {{CONTACT_EMAIL}}
 
+## Instagram
+
+Follow and message us at [@theledgerruk](https://www.instagram.com/theledgerruk/) for daily drops.
+
 ## Price corrections
 
 If a price on The Ledger doesn't match the retailer's site, prices may have changed since our morning check. If it still looks wrong, email us with the product page link and we'll look into it.
