@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}{{ p.brand }} {{ p.name }} price history | {{ site.name }}{% endblock %}
+{% block desc %}{{ p.brand }} {{ p.name }} is {{ site.currency_symbol }}{{ "%.2f"|format(p.price) }} at {{ p.merchant }}. See its price history and get alerted when it drops.{% endblock %}
+{% block canon %}p/{{ p.slug }}.html{% endblock %}
+{% block body %}
+<p class="meta" style="margin-top:32px"><a href="{{ root }}b/{{ p.brand_slug }}.html">{{ p.brand }}</a></p>
+<h1 style="margin-top:6px">{{ p.name }}</h1>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;margin:24px 0 40px">
+  <div class="thumb" style="max-width:420px">{% if p.image %}<img src="{{ p.image }}" alt="{{ p.brand }} {{ p.name }}">{% else %}<b style="font-size:96px">{{ p.brand[:1] }}</b>{% endif %}</div>
+  <div>
+    <div class="prices"><span class="now" style="font-size:34px">{{ site.currency_symbol }}{{ "%.2f"|format(p.price) }}</span>
+      {% if p.low_30 is not none %}<span class="was" style="text-decoration:none">30-day low {{ site.currency_symbol }}{{ "%.2f"|format(p.low_30) }}</span>{% endif %}</div>
+    <p class="shop" style="font-size:14px">at {{ p.merchant }}</p>
+    <p><a class="btn" href="{{ p.url }}" rel="sponsored nofollow noopener" target="_blank">View at {{ p.merchant }}</a></p>
+    <h2 style="font-size:24px;margin:28px 0 8px">Price history</h2>
+    {{ p.chart|safe }}
+    {% if others %}
+    <h2 style="font-size:24px;margin:28px 0 8px">Other retailers</h2>
+    {% for o in others %}<p style="margin:4px 0"><a href="{{ root }}p/{{ o.slug }}.html">{{ o.merchant }}</a>: {{ site.currency_symbol }}{{ "%.2f"|format(o.price) }}</p>{% endfor %}
+    {% endif %}
+  </div>
+</div>
+<script type="application/ld+json">{{ p.jsonld|safe }}</script>
+{% endblock %}
