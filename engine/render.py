@@ -7,6 +7,7 @@ from html import escape
 
 from jinja2 import Environment, FileSystemLoader
 
+from .content import build_content
 from .data import history, slugify
 
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -123,9 +124,12 @@ def build_site(db, cfg, day, drops, out_dir, demo=False):
         **common, root="", heading="All brands", canon="brands.html",
         intro="Every fragrance brand we track, with today's prices.", items=[], links=links))
 
+    # Trust pages and guides
+    content_urls = build_content(env, common, cfg, out_dir, _write)
+
     # Sitemap and robots for search engines
     base = site["base_url"].rstrip("/")
-    urls = ["index.html", "brands.html"] + [f"b/{slugify(b)}.html" for b in brands] + \
+    urls = ["index.html", "brands.html"] + content_urls + [f"b/{slugify(b)}.html" for b in brands] + \
            [f"p/{p['slug']}.html" for p in products]
     sitemap = "".join(f"<url><loc>{escape(base)}/{u}</loc><lastmod>{day}</lastmod></url>" for u in urls)
     _write(os.path.join(out_dir, "sitemap.xml"),
