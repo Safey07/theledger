@@ -1,0 +1,57 @@
+name: Daily run
+
+on:
+  schedule:
+    - cron: "17 5 * * *"     # 05:17 UTC every day, before UK breakfast
+  workflow_dispatch:          # lets you run it by hand from the Actions tab
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: daily
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install -r requirements.txt
+
+      - name: Pull feeds, detect drops, build site, email, social cards
+        env:
+          AWIN_FEED_URL: ${{ secrets.AWIN_FEED_URL }}
+          BUTTONDOWN_API_KEY: ${{ secrets.BUTTONDOWN_API_KEY }}
+          SIGNUP_FORM_ACTION: ${{ secrets.SIGNUP_FORM_ACTION }}
+        run: python run.py
+
+      - name: Save price history back to the repo
+        run: |
+          git config user.name "ledger-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/
+          git commit -m "Prices $(date -u +%F)" || echo "nothing to commit"
+          git push
+
+      - name: Keep social cards for download
+        uses: actions/upload-artifact@v4
+        with:
+          name: social-cards
+          path: output/social
+          retention-days: 14
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: output/site
+
+      - uses: actions/deploy-pages@v4
