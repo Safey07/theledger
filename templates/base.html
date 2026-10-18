@@ -57,14 +57,68 @@ footer .links a{margin-right:16px;color:var(--muted)}
 .guide:hover{border-color:var(--gold)}
 .guide h2{margin:0 0 6px;font-size:24px}
 .guide p{margin:0;color:var(--muted);font-size:14px}
-@media (max-width:560px){nav a{margin-left:10px}}
+header.top .wrap{flex-wrap:wrap}
+nav.main{display:flex;gap:18px;overflow-x:auto;scrollbar-width:none;max-width:100%}
+nav.main::-webkit-scrollbar{display:none}
+nav.main a{margin:0;white-space:nowrap;padding:4px 0}
+nav.main a:hover{color:var(--ink)}
+.card[hidden]{display:none}
+.thumb{position:relative}
+.thumb .pct{position:absolute;top:10px;left:10px;margin:0}
+.bottle{width:62%;height:auto;filter:drop-shadow(0 8px 14px rgba(0,0,0,.18))}
+.bottle .glass{fill:var(--gold);opacity:.16}
+.bottle .edge{fill:none;stroke:var(--gold);stroke-width:1.2;opacity:.75}
+.bottle .cap{fill:var(--ink);opacity:.85}
+.bottle .neck{fill:var(--gold);opacity:.55}
+.bottle .label{fill:var(--card);stroke:var(--gold);stroke-width:.6}
+.bottle .lb{fill:var(--ink);font-family:"Cormorant Garamond",Georgia,serif;font-weight:600;text-anchor:middle;letter-spacing:.03em}
+.bottle .lc{fill:var(--gold);font-family:Inter,sans-serif;text-anchor:middle;letter-spacing:.12em}
+.hero{padding-bottom:6px}
+.stats{display:flex;gap:28px;flex-wrap:wrap;margin:8px 0 22px}
+.stats b{display:block;font-family:"Cormorant Garamond",serif;font-size:34px;line-height:1;color:var(--gold)}
+.stats span{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
+.tiles{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 26px}
+.tiles a{border:1px solid var(--line);background:var(--card);border-radius:99px;padding:8px 16px;font-size:14px;text-decoration:none}
+.tiles a:hover{border-color:var(--gold)}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin:10px 0 4px;padding:12px;background:var(--card);border:1px solid var(--line);border-radius:12px}
+.toolbar.browse{position:sticky;top:0;z-index:5}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{background:transparent;color:var(--ink);border:1px solid var(--line);border-radius:99px;padding:7px 14px;font:500 13px Inter,sans-serif}
+.chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.selects{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+select,.search{padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:14px Inter,sans-serif;max-width:100%}
+.search{flex:1 1 220px;min-width:0}
+.listing .search,h1+.lede+.search{width:100%;max-width:420px;margin-bottom:16px}
+.tog{font-size:13px;display:flex;gap:6px;align-items:center;color:var(--muted)}
+.count{font-size:13px;color:var(--muted);margin:14px 0 0}
+.more{text-align:center;margin:-10px 0 50px}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--ink)}
+.brandlist{columns:200px;column-gap:24px;margin:10px 0 50px}
+.brandlist a{display:block;padding:7px 0;border-bottom:1px solid var(--line);text-decoration:none;break-inside:avoid}
+.brandlist a span{float:right;color:var(--muted);font-size:12px}
+.crumbs{font-size:13px;color:var(--muted);margin:24px 0 0}
+.crumbs a{color:var(--muted)}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:32px;margin:20px 0 30px;align-items:start}
+.thumb.big{max-width:440px}
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 14px}
+.tags span{font-size:12px;border:1px solid var(--line);border-radius:99px;padding:3px 10px;color:var(--muted)}
+.note{font-size:14px;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+.note a{color:var(--good);font-weight:600}
+.compare{width:100%;border-collapse:collapse;margin:8px 0 30px;font-size:14px;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.compare th{text-align:left;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.compare th,.compare td{padding:11px 12px;border-bottom:1px solid var(--line)}
+.compare tr.best td{background:color-mix(in srgb,var(--good) 8%,transparent)}
+.compare td a{color:var(--gold);font-weight:600}
+.tagbest{font-size:11px;color:var(--good);font-weight:600;margin-left:6px}
+h2{font-size:30px;margin:34px 0 6px}
+@media (max-width:560px){.stats{gap:18px}.stats b{font-size:28px}.toolbar.browse{position:static}.compare th:nth-child(3),.compare td:nth-child(3){display:none}}
 </style>
 </head>
 <body>
 {% if demo %}<div class="demo">Demo build with invented prices and fictional retailers.</div>{% endif %}
 <header class="top"><div class="wrap">
 <a class="logo" href="{{ root }}index.html">The <span>Ledger</span></a>
-<nav><a href="{{ root }}index.html">Today</a><a href="{{ root }}guides.html">Guides</a><a href="{{ root }}brands.html">Brands</a><a href="{{ root }}about.html">About</a></nav>
+<nav class="main"><a href="{{ root }}index.html">Today's drops</a><a href="{{ root }}shop.html">Shop all</a><a href="{{ root }}men.html">For him</a><a href="{{ root }}women.html">For her</a><a href="{{ root }}niche.html">Niche</a><a href="{{ root }}brands.html">Brands</a><a href="{{ root }}guides.html">Guides</a></nav>
 </div></header>
 <main class="wrap">{% block body %}{% endblock %}</main>
 <footer><div class="wrap">
