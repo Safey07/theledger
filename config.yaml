@@ -35,3 +35,14 @@ filters:
 email:
   provider: "none"          # "buttondown" once you have an account
   api_key_env: "BUTTONDOWN_API_KEY"
+
+# Auto-made Reels (vertical video for Instagram and TikTok)
+video:
+  per_day: 3                # one Reel per top drop
+
+# Instagram auto-posting. Stays off until IG_USER_ID and IG_ACCESS_TOKEN secrets exist.
+# Never posts demo prices.
+instagram:
+  autopost: true
+  posts_per_day: 1          # the day's biggest drop
+  api_version: "v25.0"
