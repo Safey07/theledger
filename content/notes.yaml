@@ -1,0 +1,106 @@
+# Scent profiles, written by The Ledger. Keyed "brand|fragrance" (lowercase, no size or concentration).
+# f = family, t = top notes, h = heart, b = base, v = one-line verdict, s = when it works best.
+# Shown on product pages. Add more as the catalogue grows.
+
+"dior|sauvage": {f: Fresh spicy, t: [Calabrian bergamot, pepper], h: [Sichuan pepper, lavender, geranium], b: [ambroxan, cedar, labdanum], v: "The UK's best-selling men's scent. Bright, peppery and loud in the best way.", s: All year, day or night}
+"dior|sauvage elixir": {f: Spicy amber, t: [grapefruit, cinnamon, nutmeg, cardamom], h: [lavender], b: [liquorice, sandalwood, amber, patchouli], v: "A darker, denser Sauvage. A few sprays last all day.", s: Autumn and winter evenings}
+"dior|homme intense": {f: Powdery woody, t: [lavender], h: [iris, ambrette, pear], b: [vetiver, cedar], v: "Soft, lipstick-like iris over clean woods. Quietly elegant.", s: Cooler months, smart occasions}
+"chanel|bleu de chanel": {f: Woody aromatic, t: [grapefruit, lemon, mint], h: [ginger, nutmeg, jasmine], b: [incense, cedar, sandalwood], v: "The safe-but-classy blue. Fits the office and the evening.", s: All year}
+"chanel|allure homme sport": {f: Fresh citrus, t: [orange, sea notes, aldehydes], h: [pepper, neroli, cedar], b: [tonka, vanilla, musk, amber], v: "Clean, sporty and sweet-edged. Easy to like.", s: Spring and summer}
+"yves saint laurent|y": {f: Fresh aromatic, t: [bergamot, ginger, apple], h: [sage, juniper, geranium], b: [amberwood, tonka, cedar, vetiver], v: "Sweet-fresh and modern. A crowd pleaser for twenty-somethings.", s: All year}
+"yves saint laurent|la nuit de l'homme": {f: Spicy aromatic, t: [cardamom], h: [lavender, cedar, bergamot], b: [vetiver, caraway], v: "Soft, close-wearing cardamom. Famous for compliments, light on projection.", s: Evenings, date nights}
+"yves saint laurent|myslf": {f: Floral woody, t: [bergamot], h: [orange blossom], b: [patchouli, ambrofix woods], v: "Orange blossom made masculine. Clean, bright, a little different.", s: Spring and summer}
+"giorgio armani|acqua di gio profondo": {f: Aquatic aromatic, t: [sea notes, bergamot, green mandarin], h: [rosemary, lavender, cypress], b: [mineral musk, patchouli], v: "A deeper, saltier Acqua di Gio. Holiday in a bottle.", s: Summer}
+"giorgio armani|stronger with you intensely": {f: Amber spicy, t: [pink pepper, juniper, mandarin], h: [toffee, cinnamon, lavender], b: [vanilla, amber, tonka], v: "Toffee, chestnut and vanilla. Sweet, warm and cosy.", s: Autumn and winter}
+"giorgio armani|code parfum": {f: Woody iris, t: [bergamot, mandarin], h: [iris, clary sage, lavender], b: [tonka, cedar, vetiver], v: "Smooth and refined. More grown-up than the original Code.", s: Evenings, smart occasions}
+"jean paul gaultier|le male elixir": {f: Amber fougere, t: [lavender, mint], h: [vanilla, benzoin], b: [honey, tonka, tobacco], v: "Honey, vanilla and lavender. Rich, sweet and very long-lasting.", s: Cold-weather nights}
+"jean paul gaultier|le beau le parfum": {f: Woody aromatic, t: [pineapple, iris, cypress], h: [coconut], b: [tonka, sandalwood, amber], v: "Creamy coconut and tonka with a fresh twist. Summer nights.", s: Summer evenings}
+"jean paul gaultier|ultra male": {f: Sweet amber, t: [pear, bergamot, mint], h: [lavender, cinnamon, clary sage], b: [vanilla, amber, patchouli], v: "Candied pear and vanilla. Loud, sweet and built for going out.", s: Nights out, cooler months}
+"valentino|uomo born in roma intense": {f: Amber woody, t: [vanilla], h: [lavender], b: [vetiver, woods], v: "Dark vanilla with a lavender lift. Smooth and simple.", s: Autumn and winter}
+"prada|luna rossa ocean": {f: Fresh woody, t: [bergamot, pink pepper], h: [iris, lavender, sage], b: [suede, vetiver, patchouli], v: "Clean citrus, iris and suede. Polished and versatile.", s: All year}
+"prada|l'homme": {f: Powdery iris, t: [neroli, black pepper, cardamom], h: [iris, violet, geranium], b: [amber, patchouli, cedar], v: "The 'clean shirt' scent. Soapy iris, never loud.", s: Office, all year}
+"versace|eros flame": {f: Citrus woody, t: [chinotto, black pepper, lemon], h: [pepperwood, rose], b: [tonka, vanilla, sandalwood], v: "Spicy citrus over warm vanilla. Easier to wear than Eros.", s: All year}
+"versace|eros": {f: Sweet aromatic, t: [mint, green apple, lemon], h: [tonka, geranium, ambroxan], b: [vanilla, vetiver, oakmoss, cedar], v: "Mint, apple and vanilla. Big, sweet, club-ready.", s: Nights out}
+"versace|dylan blue": {f: Fresh aromatic, t: [bergamot, grapefruit, fig leaf], h: [violet leaf, black pepper, ambroxan], b: [incense, tonka, saffron, musk], v: "A good-value fresh blue. Clean and inoffensive.", s: All year, daytime}
+"dolce & gabbana|the one": {f: Amber spicy, t: [grapefruit, coriander, basil], h: [cardamom, ginger, orange blossom], b: [tobacco, amber, cedar], v: "Warm tobacco and spice. A smart, classic evening scent.", s: Autumn and winter}
+"dolce & gabbana|light blue pour homme": {f: Citrus aromatic, t: [grapefruit, bergamot, juniper], h: [pepper, rosemary, rosewood], b: [musk, incense, oakmoss], v: "Zesty Mediterranean freshness. Pure summer.", s: Hot days}
+"hermes|terre d'hermes": {f: Woody citrus, t: [orange, grapefruit], h: [pepper, flint], b: [vetiver, cedar, benzoin], v: "Orange, earth and vetiver. A modern classic with real character.", s: All year}
+"hermes|h24": {f: Aromatic green, t: [clary sage], h: [narcissus], b: [rosewood, sclarene], v: "Green, metallic and unusual. For someone who wants to smell different.", s: Spring, daytime}
+"guerlain|l'homme ideal": {f: Amber almond, t: [almond, citrus, rosemary], h: [tonka, leather], b: [vetiver, cedar], v: "Almond and tonka, nutty and smooth. Polished evening wear.", s: Cooler months}
+"viktor & rolf|spicebomb extreme": {f: Spicy oriental, t: [black pepper, cumin], h: [cinnamon, saffron], b: [tobacco, vanilla, lavender], v: "Tobacco and cinnamon. Warm, rich and long-lasting.", s: Winter evenings}
+"paco rabanne|1 million elixir": {f: Woody spicy, t: [davana, apple], h: [rose, cinnamon], b: [vetiver, sandalwood, tonka], v: "Fruity, spicy and dense. Loud and confident.", s: Nights out}
+"paco rabanne|phantom": {f: Aromatic fougere, t: [lemon, lavender], h: [apple, patchouli], b: [vanilla, vetiver], v: "Lavender and lemon with a sweet finish. Young and playful.", s: All year}
+"paco rabanne|invictus victory elixir": {f: Amber spicy, t: [pink pepper, cardamom], h: [lavender, incense], b: [vanilla, tonka, patchouli], v: "Smoky-sweet and very strong. One spray goes a long way.", s: Cold nights}
+"carolina herrera|bad boy cobalt": {f: Woody aromatic, t: [pepper, bergamot], h: [lavender, geranium], b: [patchouli, cedar, vetiver], v: "Fresh lavender over dark woods. A grown-up blue.", s: All year}
+"montblanc|explorer": {f: Woody aromatic, t: [bergamot, pink pepper, clary sage], h: [vetiver, leather], b: [ambroxan, patchouli, akigalawood], v: "Often called an affordable alternative to Aventus. Fresh and woody.", s: All year}
+"montblanc|legend": {f: Aromatic fougere, t: [bergamot, lavender, pineapple], h: [oakmoss, geranium, apple], b: [tonka, sandalwood], v: "Clean, fruity-fresh and easy. Superb value.", s: Daytime, spring and summer}
+"azzaro|the most wanted parfum": {f: Amber spicy, t: [ginger], h: [wood notes], b: [bourbon vanilla, toffee], v: "Ginger and toffee. Sweet, warm and attention-grabbing.", s: Winter nights}
+"azzaro|wanted by night": {f: Amber spicy, t: [cinnamon, red mandarin], h: [tobacco, cedar], b: [benzoin, leather, patchouli], v: "Cinnamon and tobacco. Rich and seductive.", s: Evenings}
+"hugo boss|boss bottled elixir": {f: Woody aromatic, t: [incense, cardamom], h: [vetiver, patchouli], b: [cedar, labdanum], v: "Smoky, woody take on Bottled. Darker and denser.", s: Autumn and winter}
+"hugo boss|boss bottled": {f: Woody spicy, t: [apple, plum, bergamot], h: [cinnamon, clove, geranium], b: [vanilla, sandalwood, cedar], v: "Apple and warm spice. A proper office-friendly classic.", s: All year}
+"givenchy|gentleman reserve privee": {f: Woody iris, t: [bergamot, pink pepper], h: [iris, whisky accord], b: [mineral amber, benzoin], v: "Whisky and iris. Refined and a little boozy.", s: Autumn evenings}
+"burberry|hero": {f: Woody aromatic, t: [bergamot], h: [juniper, black pepper], b: [cedar], v: "Clean cedar and pepper. Simple, smart, inoffensive.", s: Office, all year}
+"ralph lauren|polo red": {f: Amber spicy, t: [grapefruit, lemon, red pepper], h: [saffron, sage], b: [coffee, amber, woods], v: "Bright citrus over coffee and amber. Energetic.", s: Evenings, cooler months}
+"calvin klein|eternity": {f: Aromatic fougere, t: [lavender, mandarin, lemon], h: [jasmine, basil, sage], b: [sandalwood, vetiver, amber], v: "A clean, timeless 90s classic. Brilliant value.", s: Daytime, all year}
+"bvlgari|man in black": {f: Spicy leather, t: [rum, spices], h: [tuberose, iris, leather], b: [benzoin, tonka, guaiac wood], v: "Rum, leather and spice. Dark and sophisticated.", s: Winter evenings}
+"mugler|alien man": {f: Woody leather, t: [bergamot, violet leaf], h: [leather, saffron, white amber], b: [vetiver, cashmeran], v: "Metallic woods and leather. Unusual and long-lasting.", s: Evenings}
+"chanel|coco mademoiselle": {f: Chypre floral, t: [orange, bergamot], h: [rose, jasmine], b: [patchouli, vetiver, white musk], v: "Bright orange and rose over patchouli. Timeless and elegant.", s: All year}
+"chanel|chance eau tendre": {f: Fruity floral, t: [grapefruit, quince], h: [jasmine, hyacinth], b: [white musk, iris, amber], v: "Soft, fresh and fruity. A gentle everyday scent.", s: Spring and summer}
+"chanel|n°5": {f: Floral aldehydic, t: [aldehydes, neroli, ylang-ylang], h: [rose, jasmine, iris], b: [sandalwood, vanilla, vetiver], v: "The most famous perfume in the world. Powdery, soapy and classic.", s: Evenings, special occasions}
+"dior|miss dior": {f: Floral, t: [lily of the valley, peony], h: [rose, iris], b: [musk, vanilla, tonka], v: "Soft rose and peony. Romantic and polished.", s: Spring, daytime}
+"dior|j'adore": {f: Floral, t: [pear, melon, bergamot], h: [jasmine, rose, ylang-ylang], b: [vanilla, musk, cedar], v: "A golden bouquet of white flowers. Elegant and feminine.", s: All year}
+"lancome|la vie est belle": {f: Gourmand, t: [blackcurrant, pear], h: [iris, jasmine, orange blossom], b: [praline, vanilla, patchouli], v: "Praline and iris. Sweet, warm and very popular.", s: Autumn and winter}
+"lancome|idole": {f: Floral musky, t: [bergamot, pear], h: [rose, jasmine], b: [white musk, vanilla, patchouli], v: "Clean, sheer rose. Modern and light.", s: Spring and summer}
+"gucci|bloom": {f: White floral, t: [tuberose, jasmine], h: [rangoon creeper], b: [musk, orris], v: "A lush garden of white flowers. Fresh and natural.", s: Spring and summer}
+"gucci|flora gorgeous gardenia": {f: Floral fruity, t: [red berries, pear], h: [gardenia, jasmine], b: [brown sugar, patchouli], v: "Sweet berries and gardenia. Playful and bright.", s: Spring and summer}
+"yves saint laurent|libre": {f: Floral fougere, t: [lavender, mandarin], h: [orange blossom, jasmine], b: [vanilla, musk, cedar], v: "Lavender meets orange blossom. Bold and confident.", s: All year}
+"yves saint laurent|black opium": {f: Gourmand, t: [pear, pink pepper], h: [coffee, jasmine], b: [vanilla, patchouli, cedar], v: "Coffee and vanilla. Sweet, dark and addictive.", s: Evenings, cooler months}
+"carolina herrera|good girl": {f: Floral amber, t: [almond, coffee], h: [tuberose, jasmine], b: [tonka, cocoa], v: "Almond, tuberose and cocoa in a stiletto bottle. Sweet and sultry.", s: Evenings}
+"giorgio armani|my way": {f: Floral, t: [bergamot, orange blossom], h: [tuberose, jasmine], b: [vanilla, cedar, white musk], v: "Clean white florals with soft vanilla. Easy to wear.", s: All year}
+"giorgio armani|si": {f: Chypre fruity, t: [blackcurrant], h: [rose, freesia], b: [vanilla, patchouli, woods], v: "Blackcurrant and vanilla. Warm, smooth and grown-up.", s: Autumn and winter}
+"viktor & rolf|flowerbomb": {f: Floral gourmand, t: [tea, bergamot], h: [jasmine, rose, orchid], b: [patchouli, musk], v: "A sweet floral explosion. Big and feminine.", s: Evenings}
+"mugler|alien": {f: Woody floral, t: [jasmine], h: [cashmeran], b: [white amber], v: "Radiant jasmine and amber. Strong and unforgettable.", s: Evenings, cooler months}
+"paco rabanne|fame parfum": {f: Floral fruity, t: [mango, bergamot], h: [jasmine], b: [incense, vanilla, sandalwood], v: "Mango and jasmine with incense. Fruity but grown-up.", s: All year}
+"valentino|donna born in roma": {f: Floral gourmand, t: [blackcurrant, bergamot], h: [jasmine], b: [bourbon vanilla, cashmeran], v: "Jasmine and vanilla. Sweet, modern and long-lasting.", s: All year}
+"prada|paradoxe": {f: Floral amber, t: [pear, bergamot], h: [neroli, jasmine], b: [amber, musk, vanilla], v: "Soft neroli over amber. Refined and modern.", s: All year}
+"marc jacobs|daisy": {f: Floral fruity, t: [strawberry, violet leaf, grapefruit], h: [violet, jasmine, gardenia], b: [musk, vanilla, white woods], v: "Light, fresh and youthful. A spring classic.", s: Spring and summer}
+"burberry|goddess": {f: Aromatic gourmand, t: [lavender], h: [vanilla], b: [cacao], v: "Lavender and vanilla. Cosy and comforting.", s: Autumn and winter}
+"givenchy|l'interdit": {f: White floral, t: [pear, bergamot], h: [tuberose, orange blossom, jasmine], b: [patchouli, vetiver, ambroxan], v: "White flowers with a dark, earthy twist.", s: Evenings}
+"dolce & gabbana|light blue": {f: Citrus floral, t: [Sicilian lemon, apple, cedar], h: [jasmine, bamboo, white rose], b: [cedar, musk, amber], v: "Crisp lemon and apple. The definitive summer scent.", s: Summer}
+"jean paul gaultier|scandal": {f: Floral gourmand, t: [blood orange, mandarin], h: [honey, gardenia, orange blossom], b: [patchouli, beeswax, caramel], v: "Honey and orange blossom. Sweet, bold and playful.", s: Evenings}
+"narciso rodriguez|for her": {f: Musky floral, t: [rose, peach], h: [musk, amber], b: [patchouli, vetiver], v: "Skin-like musk and rose. Sensual and understated.", s: All year}
+"chloe|": {f: Floral, t: [peony, lychee, freesia], h: [rose, magnolia], b: [cedar, amber], v: "Fresh, powdery rose. Soft and feminine.", s: Spring, daytime}
+"ariana grande|cloud": {f: Gourmand, t: [lavender, pear, bergamot], h: [whipped cream, praline, coconut], b: [musk, vanilla, woods], v: "Whipped cream and praline. A budget favourite with big projection.", s: All year}
+"billie eilish|eilish": {f: Gourmand, t: [mandarin, sugared petals], h: [vanilla, cocoa, spices], b: [tonka, musk, woods], v: "Vanilla and cocoa. Warm and cosy on a budget.", s: Autumn and winter}
+"sol de janeiro|cheirosa 62": {f: Gourmand, t: [pistachio, almond], h: [jasmine, heliotrope], b: [salted caramel, vanilla], v: "The Bum Bum scent. Pistachio and salted caramel in a light mist.", s: Summer, layering}
+"kayali|vanilla 28": {f: Gourmand, t: [vanilla orchid], h: [brown sugar, tonka], b: [musk, amber], v: "A rich, sweet vanilla. Built for layering.", s: Autumn and winter}
+"creed|aventus": {f: Fruity chypre, t: [pineapple, blackcurrant, bergamot, apple], h: [birch, patchouli, jasmine], b: [musk, oakmoss, ambergris, vanilla], v: "Smoky pineapple and birch. The most famous niche men's fragrance.", s: All year}
+"creed|silver mountain water": {f: Fresh tea, t: [bergamot, mandarin], h: [green tea, blackcurrant], b: [musk, sandalwood], v: "Crisp green tea and mountain air. Clean and calm.", s: Spring and summer}
+"parfums de marly|layton": {f: Amber spicy, t: [apple, lavender, bergamot], h: [geranium, violet, jasmine], b: [vanilla, cardamom, sandalwood, pepper], v: "Apple, vanilla and spice. A versatile niche crowd-pleaser.", s: Autumn and winter}
+"parfums de marly|delina": {f: Floral fruity, t: [lychee, rhubarb, bergamot], h: [Turkish rose, peony], b: [vanilla, cashmeran, musk], v: "Lychee and rose. Pretty, pink and very popular.", s: Spring, daytime}
+"maison francis kurkdjian|baccarat rouge 540": {f: Amber floral, t: [saffron, jasmine], h: [amberwood, ambergris], b: [fir resin, cedar], v: "The saffron-and-amber cult scent. Airy, sweet and instantly recognisable.", s: All year}
+"maison francis kurkdjian|grand soir": {f: Amber, t: [Spanish labdanum], h: [benzoin, tonka], b: [amber, vanilla], v: "Pure golden amber. Warm, resinous and luxurious.", s: Winter evenings}
+"xerjoff|naxos": {f: Amber gourmand, t: [lavender, bergamot, lemon], h: [honey, cinnamon, jasmine], b: [tobacco, tonka, vanilla], v: "Honeyed tobacco and lavender. Rich and Sicilian.", s: Autumn and winter}
+"xerjoff|erba pura": {f: Fruity amber, t: [orange, lemon, bergamot], h: [fruits], b: [white musk, vanilla, amber], v: "A burst of juicy fruit over musk. Huge projection.", s: Spring and summer}
+"initio|oud for greatness": {f: Woody oud, t: [saffron, nutmeg, lavender], h: [agarwood], b: [patchouli, musk], v: "Clean, saffron-lifted oud. A modern take on oud.", s: Evenings}
+"amouage|interlude man": {f: Smoky amber, t: [oregano, pimento, bergamot], h: [frankincense, opoponax, amber], b: [leather, oud, sandalwood], v: "Smoky incense and resin. Powerful and complex.", s: Winter}
+"amouage|reflection man": {f: Floral woody, t: [rosemary, pink pepper, petitgrain], h: [neroli, jasmine, orris], b: [sandalwood, cedar, vetiver], v: "Clean white florals and woods. Elegant and fresh.", s: Spring and summer}
+"kilian|angels' share": {f: Gourmand, t: [cognac], h: [cinnamon, tonka, oak], b: [praline, vanilla, sandalwood], v: "Cognac and cinnamon. Like a boozy dessert.", s: Winter evenings}
+"byredo|gypsy water": {f: Woody aromatic, t: [bergamot, lemon, pepper, juniper], h: [incense, pine needles, orris], b: [sandalwood, vanilla, amber], v: "Pine, incense and vanilla. Soft and bohemian.", s: All year}
+"byredo|mojave ghost": {f: Woody floral, t: [ambrette, sapodilla], h: [magnolia, violet, sandalwood], b: [amber, cedar, musk], v: "Soft, powdery musk. Quiet and comforting.", s: All year}
+"le labo|santal 33": {f: Woody, t: [cardamom, iris, violet], h: [Australian sandalwood, papyrus], b: [cedar, leather, amber], v: "The sandalwood that defined 2010s niche. Dry, woody and distinctive.", s: All year}
+"le labo|another 13": {f: Musky, t: [ambrette, pear], h: [jasmine, moss], b: [ambroxan, musk], v: "A clean, skin-like musk. Subtle but addictive.", s: All year}
+"tom ford|oud wood": {f: Woody oud, t: [rosewood, cardamom, Chinese pepper], h: [oud, sandalwood, vetiver], b: [tonka, vanilla, amber], v: "Smooth, approachable oud. Polished and warm.", s: Autumn and winter}
+"tom ford|tobacco vanille": {f: Amber spicy, t: [tobacco leaf, spices], h: [vanilla, cocoa, tonka], b: [dried fruits, woods], v: "Pipe tobacco and vanilla. Rich and opulent.", s: Winter evenings}
+"tom ford|ombre leather": {f: Leather, t: [cardamom], h: [leather, jasmine], b: [amber, moss, patchouli], v: "Soft suede leather. Rugged but smooth.", s: Autumn and winter}
+"jo malone|wood sage & sea salt": {f: Woody aromatic, t: [ambrette], h: [sea salt], b: [sage, red algae], v: "Sea breeze and sage. Light, clean and coastal.", s: Spring and summer}
+"jo malone|english pear & freesia": {f: Fruity floral, t: [pear, melon], h: [freesia, rose], b: [patchouli, rhubarb, amber], v: "Juicy pear and freesia. Fresh and easy.", s: Autumn, daytime}
+"diptyque|philosykos": {f: Green woody, t: [fig leaf], h: [fig], b: [white cedar, woods], v: "A whole fig tree, leaves and all. Green and milky.", s: Summer}
+"maison margiela|replica jazz club": {f: Amber spicy, t: [pink pepper, neroli, lemon], h: [rum, clary sage, java vetiver], b: [tobacco, vanilla, styrax], v: "Rum and tobacco in a leather armchair. Warm and moody.", s: Autumn and winter}
+"maison margiela|replica by the fireplace": {f: Woody smoky, t: [pink pepper, orange blossom, clove], h: [chestnut, guaiac wood, juniper], b: [vanilla, cashmeran, Peru balsam], v: "Roasted chestnuts and woodsmoke. Cosy in a bottle.", s: Winter}
+"nishane|hacivat": {f: Fruity chypre, t: [pineapple, grapefruit, bergamot], h: [cedar, patchouli, jasmine], b: [oakmoss, woods], v: "Pineapple and oakmoss. Often compared to Aventus.", s: All year}
+"mancera|cedrat boise": {f: Woody citrus, t: [Sicilian lemon, blackcurrant, spices], h: [patchouli, water fruits, jasmine], b: [leather, vanilla, white musk, sandalwood], v: "Lemon and blackcurrant over woods. Long-lasting value niche.", s: All year}
+"montale|arabians tonka": {f: Amber oud, t: [saffron, bergamot], h: [rose, oud], b: [tonka, amber, sugar], v: "Sweet tonka and oud. Very strong and long-lasting.", s: Winter evenings}
+"acqua di parma|colonia": {f: Citrus aromatic, t: [Sicilian citrus, lavender, rosemary], h: [verbena, rose], b: [vetiver, sandalwood, patchouli], v: "Classic Italian cologne. Bright, clean and timeless.", s: Spring and summer}
+"penhaligon's|halfeti": {f: Amber spicy, t: [grapefruit, cardamom, saffron], h: [rose, oud, lavender], b: [leather, sandalwood, amber], v: "Rich, spiced rose and oud. Opulent and British.", s: Evenings}
+"memo paris|african leather": {f: Leather spicy, t: [saffron, cumin, bergamot], h: [geranium, cardamom], b: [leather, oud, patchouli], v: "Dusty leather and saffron. Warm and adventurous.", s: Autumn and winter}
