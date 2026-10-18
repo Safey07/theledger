@@ -9,7 +9,7 @@ from jinja2 import Environment, FileSystemLoader
 
 import statistics
 
-from .classify import base_key, tag, verdict
+from .classify import base_key, match_key, tag, verdict
 from .content import build_content
 from .data import history, slugify
 
@@ -83,10 +83,11 @@ def _catalogue(products, sym):
     """One entry per fragrance (brand + name), using its cheapest retailer today."""
     groups = {}
     for p in products:
-        groups.setdefault((p["brand"], p["name"]), []).append(p)
+        groups.setdefault(match_key(p["brand"], p["name"]), []).append(p)
     items = []
-    for (brand, name), listings in groups.items():
+    for listings in groups.values():
         best = min(listings, key=lambda x: x["price"])
+        brand, name = best["brand"], min((x["name"] for x in listings), key=len)
         usual = best.get("usual")
         pct = round((usual - best["price"]) / usual * 100) if usual and usual > best["price"] else 0
         items.append({
@@ -95,8 +96,7 @@ def _catalogue(products, sym):
             "g": best["gender"], "k": 1 if best["niche"] else 0, "r": len(listings),
             "m": best["merchant"], "i": best["image"] or "", "c": best["conc"], "h": best["shape"],
             "v": best["verdict"]["k"], "f": (best.get("notes") or {}).get("f", ""),
-            "x": " ".join((best.get("notes") or {}).get(k_, []) and " ".join((best.get("notes") or {}).get(k_, []))
-                          for k_ in ("t", "h", "b")).lower(),
+            "x": " ".join(w for k_ in ("t", "h", "b") for w in (best.get("notes") or {}).get(k_, [])).lower(),
         })
     items.sort(key=lambda x: (-x["d"], x["b"], x["n"]))
     return items
@@ -135,7 +135,7 @@ def build_site(db, cfg, day, drops, out_dir, demo=False):
     by_name = {}
     for p in products:
         tag(p, niche_brands)
-        by_name.setdefault((p["brand"], p["name"]), []).append(p)
+        by_name.setdefault(match_key(p["brand"], p["name"]), []).append(p)
 
     # Price history for every listing (used by product pages and the catalogue)
     month_ago = (date.fromisoformat(day) - timedelta(days=30)).isoformat()
@@ -188,7 +188,7 @@ def build_site(db, cfg, day, drops, out_dir, demo=False):
                        "availability": "https://schema.org/InStock", "url": p["url"],
                        "seller": {"@type": "Organization", "name": p["merchant"]}},
         }).replace("</", "<\\/")
-        compare = sorted(by_name[(p["brand"], p["name"])], key=lambda o: o["price"])
+        compare = sorted(by_name[match_key(p["brand"], p["name"])], key=lambda o: o["price"])
         more = [c for c in catalogue if c["b"] == p["brand"] and c["n"] != p["name"]][:4]
         _write(os.path.join(out_dir, "p", f"{p['slug']}.html"),
                env.get_template("product.html").render(**common, root="../", p=p, compare=compare,
