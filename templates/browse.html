@@ -15,7 +15,7 @@
     <select id="max" aria-label="Price"><option value="">Any price</option><option value="50">Under £50</option><option value="75">Under £75</option><option value="100">Under £100</option><option value="150">Under £150</option><option value="250">Under £250</option></select>
     <select id="type" aria-label="Type"><option value="">All types</option><option value="0">Designer</option><option value="1">Niche</option></select>
     <select id="sort" aria-label="Sort"><option value="d">Biggest saving</option><option value="pa">Price: low to high</option><option value="pd">Price: high to low</option><option value="az">Brand A to Z</option></select>
-    <label class="tog"><input type="checkbox" id="deals"> Offers only</label>
+    <label class="tog"><input type="checkbox" id="deals"> Good time to buy</label>
   </div>
 </div>
 <p class="count" id="count">{{ total }} fragrances</p>
@@ -40,15 +40,15 @@
   }
   function card(c){
     return '<a class="card" href="p/'+c.s+'.html"><div class="thumb">'+(c.i?'<img src="'+esc(c.i)+'" alt="" loading="lazy" onerror="this.remove()">':'')+bottle(c.b,c.c,c.h)+
-      (c.d?'<span class="pct">\u2212'+c.d+'%</span>':'')+'</div><div class="info"><div class="brand">'+esc(c.b)+'</div><div class="name">'+esc(c.n)+'</div>'+
+      (c.d?'<span class="pct">\u2212'+c.d+'%</span>':'')+'</div><div class="info"><div class="brand"><span>'+esc(c.b)+'</span>'+(c.f?'<em>'+esc(c.f)+'</em>':'')+'</div><div class="name">'+esc(c.n)+'</div>'+
       '<div class="row"><span class="now">'+SYM+c.p.toFixed(2)+'</span>'+(c.u?'<span class="was">'+SYM+c.u.toFixed(2)+'</span>':'')+'</div>'+
-      '<div class="meta"><span>'+esc(c.m)+'</span>'+(c.r>1?'<span class="dot">'+c.r+' retailers</span>':'')+'</div></div></a>';
+      '<div class="meta">'+(c.v==='buy'?'<span class="atl">Good time to buy</span>':'')+'<span>'+esc(c.m)+'</span>'+(c.r>1?'<span class="dot">'+c.r+' retailers</span>':'')+'</div></div></a>';
   }
   function filter(){
     var q=st.q.toLowerCase().trim(), mx=st.max?+st.max:0;
     list=all.filter(function(c){
-      return (!st.g||c.g===st.g)&&(!st.b||c.b===st.b)&&(!mx||c.p<=mx)&&(st.k===''||String(c.k)===st.k)&&(!st.deals||c.d>0)&&
-        (!q||(c.b+' '+c.n).toLowerCase().indexOf(q)>-1);
+      return (!st.g||c.g===st.g)&&(!st.b||c.b===st.b)&&(!mx||c.p<=mx)&&(st.k===''||String(c.k)===st.k)&&(!st.deals||c.v==='buy')&&
+        (!q||(c.b+' '+c.n+' '+(c.f||'')).toLowerCase().indexOf(q)>-1);
     });
     var s=st.sort;
     list.sort(function(a,b){return s==='pa'?a.p-b.p:s==='pd'?b.p-a.p:s==='az'?(a.b+a.n).localeCompare(b.b+b.n):(b.d-a.d)||(a.p-b.p)});
@@ -72,6 +72,7 @@
   $('deals').onchange=function(){st.deals=this.checked;filter()};
   $('sort').onchange=function(){st.sort=this.value;filter()};
   more.onclick=render;
+  var qp=new URLSearchParams(location.search).get('q'); if(qp){st.q=qp;$('q').value=qp;}
   sync();
   fetch('catalog.json').then(function(r){return r.json()}).then(function(d){all=d;filter();}).catch(function(){});
 })();
