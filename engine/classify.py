@@ -63,6 +63,35 @@ def concentration(name):
     return ""
 
 
+_STRIP = r"\b(eau de parfum|eau de toilette|eau de cologne|extrait de parfum|edp|edt|perfume mist|\d+\s?ml)\b"
+
+
+def base_key(brand, name):
+    """'Dior', 'Sauvage Eau de Parfum 100ml' -> 'dior|sauvage'. Used to match scent notes."""
+    n = re.sub(_STRIP, "", (name or "").lower())
+    n = re.sub(r"\b(spray|vaporisateur|for men|for women|pour homme|pour femme)\b$", "", n.strip())
+    n = re.sub(r"\s+", " ", n).strip(" -,")
+    if n.endswith(" cologne"):
+        n = n[: -len(" cologne")]
+    return f"{(brand or '').lower().strip()}|{n}"
+
+
+def verdict(price, pts, day):
+    """Buy now / Fair / Wait, from where today's price sits in this listing's own history."""
+    import statistics
+    past = [p for d, p in pts if d < day]
+    if len(past) < 10:
+        return {"k": "track", "label": "Tracking", "why": "We need a few more weeks of prices before we can judge this one."}
+    lo, med = min(past), statistics.median(past)
+    if price <= lo + 0.01 and price < med * 0.97:
+        return {"k": "buy", "label": "Buy now", "why": f"Lowest price we've tracked. Usually £{med:.2f}."}
+    if price <= med * 0.93:
+        return {"k": "buy", "label": "Good time to buy", "why": f"{round((med - price) / med * 100)}% below its usual £{med:.2f}."}
+    if price <= med * 1.02:
+        return {"k": "fair", "label": "Fair price", "why": f"About what it usually costs (£{med:.2f}). No rush."}
+    return {"k": "wait", "label": "Wait", "why": f"Above its usual £{med:.2f}. It has been as low as £{lo:.2f}."}
+
+
 def tag(product, niche_brands=None):
     """Add gender, niche and size keys to a product dict (in place) and return it."""
     product["gender"] = gender(product.get("name", ""), product.get("category", "") or "")
