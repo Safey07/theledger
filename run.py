@@ -11,7 +11,7 @@ from datetime import date
 
 import yaml
 
-from engine import data, render
+from engine import data, render, video
 from engine.demo import build as build_demo
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -71,10 +71,19 @@ def main():
     drops = data.detect_drops(db, day, cfg["detection"])
     pages = render.build_site(db, cfg, day, drops, os.path.join(out, "site"), demo=args.demo)
     subject, html = render.build_digest(cfg, day, drops, os.path.join(out, "email", f"{day}.html"))
-    cards = render.build_social(cfg, day, drops, os.path.join(out, "social", day))
+    social_dir = os.path.join(out, "social", day)
+    cards = render.build_social(cfg, day, drops, social_dir)
+    reels = []
+    try:
+        reels = video.build_reels(db, cfg, day, drops, social_dir, os.path.join(out, "site"),
+                                  publish=not args.demo)
+    except Exception as err:  # a video problem must never stop the site updating
+        print(f"video: skipped ({err})")
+    with open(os.path.join(social_dir, "manifest.json"), "w") as fh:
+        json.dump({"day": day, "demo": args.demo, "reels": reels}, fh, indent=2)
     data.mark_published(db, drops, day)
 
-    print(f"{day}: {count} prices stored, {len(drops)} drops, {pages} pages, {cards} social cards")
+    print(f"{day}: {count} prices stored, {len(drops)} drops, {pages} pages, {cards} social cards, {len(reels)} reels")
     print(f"email subject: {subject}")
     if drops and not args.demo and not args.no_email:
         send_email(cfg, subject, html)
