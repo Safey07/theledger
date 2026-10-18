@@ -1,7 +1,7 @@
 """Render evergreen Instagram carousels (1080x1350) from content/evergreen.yaml.
 
 Used on days with no real price data, so the account keeps posting.
-Same dark-and-gold look as the Reels. Text only, drawn with Pillow.
+Same dark-and-gold look as the Reels. Dense, 2-3 slides per post.
 """
 import os
 
@@ -12,7 +12,8 @@ from .video import FONT_DIR, ensure_fonts
 
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 W, H = 1080, 1350
-BG, CREAM, GOLD, MUTED = "#12100e", "#f3ece1", "#c2a266", "#8d8173"
+M = 84  # side margin
+BG, CREAM, GOLD, MUTED, BODY = "#12100e", "#f3ece1", "#c2a266", "#8d8173", "#d9d0c3"
 
 
 def _font(name, size):
@@ -34,7 +35,7 @@ def _wrap(draw, text, font, width):
 def _canvas():
     img = Image.new("RGB", (W, H), BG)
     glow = Image.new("L", (W, H), 0)
-    ImageDraw.Draw(glow).ellipse([W * 0.15, -H * 0.2, W * 0.85, H * 0.55], fill=90)
+    ImageDraw.Draw(glow).ellipse([W * 0.1, -H * 0.15, W * 0.9, H * 0.6], fill=95)
     glow = glow.filter(ImageFilter.GaussianBlur(220))
     img = Image.composite(Image.new("RGB", (W, H), "#2b2219"), img, glow)
     noise = Image.effect_noise((W, H), 6).convert("RGB")
@@ -42,60 +43,82 @@ def _canvas():
     return img
 
 
-def _footer(draw, index, total, handle):
-    draw.text((80, H - 92), "THE LEDGER", font=_font("Inter.ttf", 22), fill=GOLD)
-    draw.text((W - 80, H - 92), f"{index}/{total}", font=_font("Inter.ttf", 22), fill=MUTED, anchor="ra")
-    draw.line([(80, H - 120), (W - 80, H - 120)], fill="#2e2822", width=1)
+def _frame(draw, index, total, handle, site):
+    """Header wordmark and footer on every slide, so nothing feels bare."""
+    draw.text((M, 72), "THE LEDGER", font=_font("Inter.ttf", 24), fill=GOLD)
+    draw.text((W - M, 72), f"{index} / {total}", font=_font("Inter.ttf", 24), fill=MUTED, anchor="ra")
+    draw.line([(M, 118), (W - M, 118)], fill="#2e2822", width=1)
+    draw.line([(M, H - 128), (W - M, H - 128)], fill="#2e2822", width=1)
+    draw.text((M, H - 96), site, font=_font("Inter.ttf", 24), fill=CREAM)
+    draw.text((W - M, H - 96), f"@{handle}", font=_font("Inter.ttf", 24), fill=MUTED, anchor="ra")
 
 
-def _hook(slide, index, total, handle):
+def _hook(slide, index, total, handle, site):
     img = _canvas()
     d = ImageDraw.Draw(img)
-    y = 300
+    f_title = _font("Cormorant.ttf", 112)
+    f_ital = _font("CormorantItalic.ttf", 112)
+    f_sub = _font("Inter.ttf", 32)
+    t_lines = _wrap(d, slide["title"], f_title, W - 2 * M)
+    i_lines = _wrap(d, slide.get("italic", ""), f_ital, W - 2 * M) if slide.get("italic") else []
+    s_lines = _wrap(d, slide.get("sub", ""), f_sub, W - 2 * M) if slide.get("sub") else []
+    block = 90 + len(t_lines) * 120 + len(i_lines) * 120 + (40 + len(s_lines) * 46 if s_lines else 0)
+    y = (H - block) // 2 - 20
     if slide.get("kicker"):
-        d.text((80, y), slide["kicker"].upper(), font=_font("Inter.ttf", 26), fill=GOLD)
-        d.line([(80, y + 52), (160, y + 52)], fill=GOLD, width=2)
+        d.text((M, y), slide["kicker"].upper(), font=_font("Inter.ttf", 28), fill=GOLD)
+        d.line([(M, y + 56), (M + 72, y + 56)], fill=GOLD, width=2)
+    y += 90
+    for line in t_lines:
+        d.text((M, y), line, font=f_title, fill=CREAM)
         y += 120
-    f = _font("Cormorant.ttf", 104)
-    for line in _wrap(d, slide["title"], f, W - 160):
-        d.text((80, y), line, font=f, fill=CREAM)
-        y += 112
-    if slide.get("italic"):
-        fi = _font("CormorantItalic.ttf", 104)
-        for line in _wrap(d, slide["italic"], fi, W - 160):
-            d.text((80, y), line, font=fi, fill=GOLD)
-            y += 112
-    d.text((80, H - 200), "Swipe  →", font=_font("Inter.ttf", 26), fill=MUTED)
-    _footer(d, index, total, handle)
+    for line in i_lines:
+        d.text((M, y), line, font=f_ital, fill=GOLD)
+        y += 120
+    if s_lines:
+        y += 40
+        for line in s_lines:
+            d.text((M, y), line, font=f_sub, fill=BODY)
+            y += 46
+    d.text((W - M, H - 190), "swipe →", font=_font("Inter.ttf", 26), fill=MUTED, anchor="ra")
+    _frame(d, index, total, handle, site)
     return img
 
 
-def _point(slide, index, total, handle):
+def _points(slide, index, total, handle, site):
     img = _canvas()
     d = ImageDraw.Draw(img)
-    d.text((80, 280), f"{index - 1:02d}", font=_font("Cormorant.ttf", 72), fill=GOLD)
-    y = 380
-    f = _font("Cormorant.ttf", 84)
-    for line in _wrap(d, slide["title"], f, W - 160):
-        d.text((80, y), line, font=f, fill=CREAM)
-        y += 92
-    y += 30
-    fb = _font("Inter.ttf", 36)
-    for line in _wrap(d, slide["body"], fb, W - 180):
-        d.text((80, y), line, font=fb, fill="#d9d0c3")
-        y += 54
-    _footer(d, index, total, handle)
-    return img
+    f_t, f_h, f_b, f_n = _font("Cormorant.ttf", 88), _font("Cormorant.ttf", 66), _font("Inter.ttf", 36), _font("Cormorant.ttf", 58)
+    x = M + 100
+    pts = slide.get("points", [])[:3]
+    gap = 36
 
+    def layout(draw_it, y):
+        if draw_it:
+            d.text((M, y), slide["title"], font=f_t, fill=CREAM)
+        y += 140
+        for i, p in enumerate(pts, 1):
+            if draw_it:
+                d.text((M, y + 4), f"{i:02d}", font=f_n, fill=GOLD)
+            for line in _wrap(d, p["h"], f_h, W - x - M):
+                if draw_it:
+                    d.text((x, y), line, font=f_h, fill=CREAM)
+                y += 72
+            y += 8
+            for line in _wrap(d, p["b"], f_b, W - x - M):
+                if draw_it:
+                    d.text((x, y), line, font=f_b, fill=BODY)
+                y += 52
+            if i < len(pts):
+                y += gap
+                if draw_it:
+                    d.line([(x, y), (W - M, y)], fill="#3a322a", width=1)
+                y += gap + 4
+        return y
 
-def _cta(index, total, handle, site_name, base_url):
-    img = _canvas()
-    d = ImageDraw.Draw(img)
-    d.text((W // 2, 460), "Every morning.", font=_font("Cormorant.ttf", 96), fill=CREAM, anchor="mm")
-    d.text((W // 2, 560), "Only the real drops.", font=_font("CormorantItalic.ttf", 96), fill=GOLD, anchor="mm")
-    d.text((W // 2, 720), f"Follow @{handle}", font=_font("Inter.ttf", 36), fill=CREAM, anchor="mm")
-    d.text((W // 2, 780), base_url.replace("https://", ""), font=_font("Inter.ttf", 30), fill=MUTED, anchor="mm")
-    _footer(d, index, total, handle)
+    height = layout(False, 0)
+    top = 118 + ((H - 128 - 118) - height) // 2
+    layout(True, top)
+    _frame(d, index, total, handle, site)
     return img
 
 
@@ -108,21 +131,19 @@ def build_all(cfg, site_dir):
     with open(path, encoding="utf-8") as fh:
         posts = yaml.safe_load(fh) or []
     base = cfg["site"]["base_url"].rstrip("/")
+    site = base.replace("https://", "")
     handle = cfg["site"].get("instagram", "")
     out = []
     for post in posts:
         slides = post["slides"]
-        total = len(slides) + 1
+        total = len(slides)
         folder = os.path.join(site_dir, "posts", post["slug"])
         os.makedirs(folder, exist_ok=True)
         urls = []
         for i, slide in enumerate(slides, 1):
-            img = _hook(slide, i, total, handle) if i == 1 else _point(slide, i, total, handle)
-            p = os.path.join(folder, f"{i}.jpg")
-            img.save(p, quality=92)
+            img = _hook(slide, i, total, handle, site) if i == 1 else _points(slide, i, total, handle, site)
+            img.save(os.path.join(folder, f"{i}.jpg"), quality=92)
             urls.append(f"{base}/posts/{post['slug']}/{i}.jpg")
-        _cta(total, total, handle, cfg["site"]["name"], base).save(os.path.join(folder, f"{total}.jpg"), quality=92)
-        urls.append(f"{base}/posts/{post['slug']}/{total}.jpg")
         caption = post["caption"].strip() + "\n\n#fragrance #perfume #fragrancetips #ukdeals #perfumetok #fragrancecommunity #theledgernotes"
         out.append({"slug": post["slug"], "caption": caption, "urls": urls})
     return out
