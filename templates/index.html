@@ -16,7 +16,7 @@
   <div class="chips" role="group" aria-label="Who for">
     <button class="chip on" data-g="">All</button><button class="chip" data-g="men">For him</button><button class="chip" data-g="women">For her</button><button class="chip" data-g="unisex">Unisex</button><button class="chip" data-k="1">Niche</button>
   </div>
-  <select aria-label="Sort" data-sort><option value="d">Biggest drop</option><option value="pa">Price: low to high</option><option value="pd">Price: high to low</option></select>
+  <div class="selects"><select aria-label="Sort" data-sort><option value="d">Biggest drop</option><option value="pa">Price: low to high</option><option value="pd">Price: high to low</option></select></div>
 </div>
 <div class="grid" id="drops">{% for d in drops %}{% include "_card.html" %}{% endfor %}</div>
 <p class="empty" id="dropsnone" hidden>No drops in this filter today. <a href="{{ root }}shop.html">Browse every fragrance</a>.</p>
