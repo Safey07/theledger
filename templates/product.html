@@ -1,24 +1,43 @@
 {% extends "base.html" %}
-{% block title %}{{ p.brand }} {{ p.name }} price history | {{ site.name }}{% endblock %}
-{% block desc %}{{ p.brand }} {{ p.name }} is {{ site.currency_symbol }}{{ "%.2f"|format(p.price) }} at {{ p.merchant }}. See its price history and get alerted when it drops.{% endblock %}
+{% from "_bottle.html" import bottle %}
+{% block title %}{{ p.brand }} {{ p.name }}: cheapest UK price and history | {{ site.name }}{% endblock %}
+{% block desc %}{{ p.brand }} {{ p.name }} from {{ site.currency_symbol }}{{ "%.2f"|format(cheapest.price) }} at {{ cheapest.merchant }}. Compare {{ compare|length }} UK retailers and see 90 days of price history.{% endblock %}
 {% block canon %}p/{{ p.slug }}.html{% endblock %}
 {% block body %}
-<p class="meta" style="margin-top:32px"><a href="{{ root }}b/{{ p.brand_slug }}.html">{{ p.brand }}</a></p>
-<h1 style="margin-top:6px">{{ p.name }}</h1>
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;margin:24px 0 40px">
-  <div class="thumb" style="max-width:420px">{% if p.image %}<img src="{{ p.image }}" alt="{{ p.brand }} {{ p.name }}">{% else %}<b style="font-size:96px">{{ p.brand[:1] }}</b>{% endif %}</div>
+<p class="crumbs"><a href="{{ root }}shop.html">Shop</a> / <a href="{{ root }}{{ p.gender }}.html">{{ p.gender_label }}</a> / <a href="{{ root }}b/{{ p.brand_slug }}.html">{{ p.brand }}</a></p>
+<div class="pgrid">
+  <div class="thumb big">{% if p.image %}<img src="{{ p.image }}" alt="{{ p.brand }} {{ p.name }}">{% else %}{{ bottle(p.brand, p.conc, p.shape) }}{% endif %}</div>
   <div>
+    <p class="meta"><a href="{{ root }}b/{{ p.brand_slug }}.html">{{ p.brand }}</a></p>
+    <h1 style="margin-top:6px">{{ p.name }}</h1>
+    <p class="tags"><span>{{ p.gender_label }}</span>{% if p.conc %}<span>{{ p.conc }}</span>{% endif %}{% if p.ml %}<span>{{ p.ml }}ml</span>{% endif %}{% if p.niche %}<span>Niche</span>{% endif %}</p>
     <div class="prices"><span class="now" style="font-size:34px">{{ site.currency_symbol }}{{ "%.2f"|format(p.price) }}</span>
-      {% if p.low_30 is not none %}<span class="was" style="text-decoration:none">30-day low {{ site.currency_symbol }}{{ "%.2f"|format(p.low_30) }}</span>{% endif %}</div>
-    <p class="shop" style="font-size:14px">at {{ p.merchant }}</p>
+      {% if p.usual and p.usual > p.price %}<span class="was">usually {{ site.currency_symbol }}{{ "%.2f"|format(p.usual) }}</span>{% endif %}</div>
+    <p class="shop" style="font-size:14px">at {{ p.merchant }}{% if p.ml %} · {{ site.currency_symbol }}{{ "%.2f"|format(p.price / p.ml * 10) }} per 10ml{% endif %}</p>
+    {% if cheapest.id != p.id %}<p class="note">Cheaper today: <a href="{{ root }}p/{{ cheapest.slug }}.html">{{ site.currency_symbol }}{{ "%.2f"|format(cheapest.price) }} at {{ cheapest.merchant }}</a></p>{% endif %}
     <p><a class="btn" href="{{ p.url }}" rel="sponsored nofollow noopener" target="_blank">View at {{ p.merchant }}</a></p>
-    <h2 style="font-size:24px;margin:28px 0 8px">Price history</h2>
-    {{ p.chart|safe }}
-    {% if others %}
-    <h2 style="font-size:24px;margin:28px 0 8px">Other retailers</h2>
-    {% for o in others %}<p style="margin:4px 0"><a href="{{ root }}p/{{ o.slug }}.html">{{ o.merchant }}</a>: {{ site.currency_symbol }}{{ "%.2f"|format(o.price) }}</p>{% endfor %}
-    {% endif %}
   </div>
 </div>
+
+{% if compare|length > 1 %}
+<h2>Compare {{ compare|length }} retailers</h2>
+<table class="compare">
+  <thead><tr><th>Retailer</th><th>Price today</th><th>30-day low</th><th></th></tr></thead>
+  <tbody>{% for o in compare %}<tr{% if loop.first %} class="best"{% endif %}>
+    <td>{{ o.merchant }}{% if loop.first %} <span class="tagbest">Cheapest</span>{% endif %}</td>
+    <td><b>{{ site.currency_symbol }}{{ "%.2f"|format(o.price) }}</b></td>
+    <td>{% if o.low_30 is not none %}{{ site.currency_symbol }}{{ "%.2f"|format(o.low_30) }}{% endif %}</td>
+    <td><a href="{{ o.url }}" rel="sponsored nofollow noopener" target="_blank">Shop</a></td></tr>{% endfor %}</tbody>
+</table>
+{% endif %}
+
+<h2>Price history at {{ p.merchant }}</h2>
+{{ p.chart|safe }}
+{% if p.low_30 is not none %}<p class="shop">30-day low {{ site.currency_symbol }}{{ "%.2f"|format(p.low_30) }}. We only call a price a drop when it is at least 10% and £5 below this bottle's own 30-day median.</p>{% endif %}
+
+{% if more %}
+<h2>More from {{ p.brand }}</h2>
+<div class="grid">{% for c in more %}{% include "_ccard.html" %}{% endfor %}</div>
+{% endif %}
 <script type="application/ld+json">{{ p.jsonld|safe }}</script>
 {% endblock %}
