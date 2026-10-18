@@ -1,120 +1,74 @@
-# Evergreen Instagram carousels. Posted on days with no real price data,
-# so the account never goes quiet. No prices, no retailers, so nothing can be wrong.
-# Each post: slug, caption, slides. Slide 1 is the hook. Last slide is added automatically.
+# Evergreen Instagram carousels, posted on days with no real price data.
+# Short copy: one idea per slide, under 14 words of body text.
+# The first post is the pinned "About" post.
 
-- slug: welcome
+- slug: about
   caption: |
-    Fragrance pricing is a game. We check the scores.
+    What The Ledger is, in 30 seconds.
 
-    Every morning The Ledger checks hundreds of designer and niche fragrance prices across UK retailers and posts only the real drops.
+    We check hundreds of designer and niche fragrance prices across UK retailers every morning. We post a drop only when a bottle is at least 10% and £5 below its own 30-day price.
 
-    No fake RRPs. No "was £150" nonsense. Just the lowest prices we've genuinely tracked.
+    What we never do: quote fake RRPs, post the same deal twice, or list grey-market sellers. Some links earn us a small commission. It never changes what we post.
 
-    Daily drops at theledgeruk.co.uk (link in bio)
+    Every bottle, every price, every day: theledgeruk.co.uk
   slides:
-    - kicker: The Ledger
-      title: Fragrance pricing is a game.
-      italic: We check the scores.
-    - title: Every morning
-      body: We check hundreds of designer and niche fragrance prices across UK retailers.
-    - title: We post a drop only when it's real
-      body: At least 10% below that bottle's own 30-day price. Never a "sale" that was already that low last month.
-    - title: No fake RRPs
-      body: We don't compare against a price nobody ever paid. Only against what the bottle actually cost.
-
-- slug: fake-rrp
-  caption: |
-    "Was £120, now £60" is often a lie.
-
-    Many fragrances are never sold at their RRP. The "saving" is measured against a price nobody paid.
-
-    The honest test is simple. What did THIS bottle cost last month? That's the only number we compare against.
-
-    theledgeruk.co.uk
-  slides:
-    - kicker: Pricing explained
-      title: '"Was £120, now £60"'
-      italic: is often a lie.
-    - title: The RRP trick
-      body: Many bottles are never sold at RRP. Retailers quote it so a normal price looks like a saving.
-    - title: The honest test
-      body: What did this exact bottle cost over the last 30 days? If today isn't well below that, it's not a drop.
-    - title: That's our only rule
-      body: We track every price daily and compare each bottle against its own history. Nothing else counts.
-
-- slug: concentrations
-  caption: |
-    EDT, EDP, Parfum. What are you actually paying for?
-
-    EDT: around 5–15% fragrance oil. Lighter, 3–5 hours.
-    EDP: around 15–20%. Richer, 5–8 hours.
-    Parfum / Extrait: 20–30%. Closest to skin, longest lasting.
-
-    Cheaper isn't worse. Pick for the occasion, then let us find the price.
-
-    theledgeruk.co.uk
-  slides:
-    - kicker: Fragrance basics
-      title: EDT, EDP, Parfum.
-      italic: What you're paying for.
-    - title: Eau de Toilette
-      body: Around 5–15% fragrance oil. Lighter, fresher, 3–5 hours. Great for daytime and summer.
-    - title: Eau de Parfum
-      body: Around 15–20%. Richer and longer, 5–8 hours. The sweet spot for most people.
-    - title: Parfum / Extrait
-      body: 20–30%. Sits closest to skin and lasts longest. Costs more per ml, but you use less.
+    - kicker: About
+      title: What The Ledger is,
+      italic: in 30 seconds.
+    - title: What we do
+      body: Check hundreds of UK fragrance prices every morning.
+    - title: How we judge a drop
+      body: At least 10% and £5 below that bottle's own 30-day price.
+    - title: What we never do
+      body: Fake RRPs. Repeated deals. Grey-market sellers.
+    - title: How we earn
+      body: Some links pay us a small commission. It never changes what we post.
 
 - slug: price-per-ml
   caption: |
     The 100ml is usually the real deal.
 
-    A 50ml at £60 is £1.20 per ml. A 100ml at £85 is £0.85 per ml. Same juice, 30% cheaper.
+    50ml at £60 is £1.20 per ml. 100ml at £85 is £0.85 per ml. Same juice, 30% less.
 
-    Only go big if you'll finish it within 2–3 years. We show £ per 10ml on every bottle so you can see it instantly.
+    Only go big if you'll finish it in 2–3 years. We show £ per 10ml on every bottle.
 
     theledgeruk.co.uk
   slides:
     - kicker: Buying smart
       title: The 100ml is usually
       italic: the real deal.
-    - title: Do the maths
-      body: 50ml at £60 is £1.20 per ml. 100ml at £85 is £0.85 per ml. Same fragrance, 30% cheaper.
-    - title: One caveat
-      body: Only buy big if you'll finish it in 2–3 years. A bottle you don't use isn't a saving.
-    - title: We show it for you
-      body: Every bottle on The Ledger shows price per 10ml, so the best size is obvious at a glance.
+    - title: Same juice, 30% less
+      body: 50ml at £60 is £1.20/ml. 100ml at £85 is £0.85/ml.
+    - title: One rule
+      body: Only go big if you'll finish it in 2–3 years.
 
 - slug: when-to-buy
   caption: |
-    The best months to buy fragrance in the UK.
+    Best months to buy fragrance in the UK.
 
-    January: post-Christmas clearouts.
-    Late November: Black Friday is genuine on many designer bottles.
-    August: summer sales before autumn launches.
+    January for clearouts. Late November for Black Friday. August before autumn launches.
 
-    Worst time: the two weeks before Christmas and Valentine's, when prices quietly rise.
+    Avoid the two weeks before Christmas and Valentine's. Or skip the calendar: we check every morning.
 
-    Or skip the calendar. We check every morning. theledgeruk.co.uk
+    theledgeruk.co.uk
   slides:
     - kicker: Timing
-      title: The best months to buy
+      title: Best months to buy
       italic: fragrance in the UK.
-    - title: January
-      body: Post-Christmas clearouts. Gift sets and big bottles get cut hard.
-    - title: Late November
-      body: Black Friday is real on many designer bottles. Less so on niche.
+    - title: Buy
+      body: January. Late November. August.
     - title: Avoid
-      body: The two weeks before Christmas and Valentine's. Prices quietly climb when demand peaks.
+      body: The two weeks before Christmas and Valentine's.
 
 - slug: our-rules
   caption: |
-    How we decide a price drop is real. Three rules.
+    Three rules before we call it a drop.
 
     1. At least 10% below the bottle's own 30-day median.
     2. At least £5 off.
-    3. Not a price we've already announced this month.
+    3. Not already announced this month.
 
-    If it fails any one, we stay quiet. That's why we post less than other deal accounts, and why you can trust what we do post.
+    Fail one and we stay quiet. That's why you can trust what we do post.
 
     theledgeruk.co.uk
   slides:
@@ -122,8 +76,26 @@
       title: Three rules before
       italic: we call it a drop.
     - title: Rule one
-      body: At least 10% below the bottle's own 30-day median price.
+      body: At least 10% below the bottle's own 30-day price.
     - title: Rule two
-      body: At least £5 off. A 10% drop on a £30 bottle isn't worth your attention.
+      body: At least £5 off.
     - title: Rule three
-      body: Not a price we've already announced this month. No recycling the same deal.
+      body: Not already announced this month.
+
+- slug: fake-rrp-2
+  caption: |
+    "RRP" is not a price anyone paid.
+
+    Most bottles never sell at RRP. A "saving" against it is a saving against nothing.
+
+    Ask one question: what did this bottle cost last month? That's the only number we use.
+
+    theledgeruk.co.uk
+  slides:
+    - kicker: Pricing explained
+      title: '"RRP" is not a price'
+      italic: anyone paid.
+    - title: The trick
+      body: Most bottles never sell at RRP. The "saving" is against nothing.
+    - title: The honest question
+      body: What did this bottle cost last month?
