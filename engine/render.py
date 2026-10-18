@@ -7,8 +7,21 @@ from html import escape
 
 from jinja2 import Environment, FileSystemLoader
 
+import statistics
+
+from .classify import tag
 from .content import build_content
 from .data import history, slugify
+
+
+def _match(c, preset):
+    if "g" in preset and c["g"] != preset["g"]:
+        return False
+    if preset.get("k") and not c["k"]:
+        return False
+    if "max" in preset and c["p"] > preset["max"]:
+        return False
+    return True
 
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -54,17 +67,54 @@ def _current_products(db, day):
            WHERE pr.day=? AND pr.in_stock=1""", (day,))]
 
 
+COLLECTIONS = [
+    # slug, heading, intro, preset filter for the browse page
+    ("shop", "Shop every fragrance", "Every fragrance we track, at its cheapest UK price today.", {}),
+    ("men", "Men's fragrance deals", "Men's aftershave and cologne at today's lowest UK prices.", {"g": "men"}),
+    ("women", "Women's perfume deals", "Women's perfume at today's lowest UK prices.", {"g": "women"}),
+    ("unisex", "Unisex fragrances", "Shared and gender-neutral scents at today's lowest UK prices.", {"g": "unisex"}),
+    ("niche", "Niche fragrance deals", "Creed, Parfums de Marly, MFK, Xerjoff and more, at today's lowest UK prices.", {"k": 1}),
+    ("under-50", "Fragrances under £50", "Designer and niche fragrances you can buy for under £50 today.", {"max": 50}),
+    ("under-100", "Fragrances under £100", "Designer and niche fragrances you can buy for under £100 today.", {"max": 100}),
+]
+
+
+def _catalogue(products, sym):
+    """One entry per fragrance (brand + name), using its cheapest retailer today."""
+    groups = {}
+    for p in products:
+        groups.setdefault((p["brand"], p["name"]), []).append(p)
+    items = []
+    for (brand, name), listings in groups.items():
+        best = min(listings, key=lambda x: x["price"])
+        usual = best.get("usual")
+        pct = round((usual - best["price"]) / usual * 100) if usual and usual > best["price"] else 0
+        items.append({
+            "b": brand, "n": name, "s": best["slug"], "p": round(best["price"], 2),
+            "u": round(usual, 2) if pct >= 5 else None, "d": pct if pct >= 5 else 0,
+            "g": best["gender"], "k": 1 if best["niche"] else 0, "r": len(listings),
+            "m": best["merchant"], "i": best["image"] or "", "c": best["conc"], "h": best["shape"],
+        })
+    items.sort(key=lambda x: (-x["d"], x["b"], x["n"]))
+    return items
+
+
 def build_site(db, cfg, day, drops, out_dir, demo=False):
     env = _env()
     site = cfg["site"]
     sym = site["currency_symbol"]
+    niche_brands = [b.lower() for b in cfg.get("niche_brands", [])] or None
     if os.path.exists(out_dir):
         shutil.rmtree(out_dir)
     static = os.path.join(HERE, "static")   # verification files, favicon, etc.
     if os.path.isdir(static):
         shutil.copytree(static, out_dir)
+    action = cfg.get("signup_action", "#")
     common = {"site": site, "updated": day, "demo": demo,
-              "signup_action": cfg.get("signup_action", "#")}
+              "signup_action": action if action and action != "#" else None,
+              "collections": COLLECTIONS}
+    for d in drops:
+        tag(d, niche_brands)
 
     # Items announced in the last 7 days that are still at or below that price
     week_ago = (date.fromisoformat(day) - timedelta(days=7)).isoformat()
@@ -76,24 +126,46 @@ def build_site(db, cfg, day, drops, out_dir, demo=False):
                JOIN prices pr ON pr.product_id=pub.product_id AND pr.day=?
                WHERE pub.day>=? AND pub.day<? GROUP BY pub.product_id""", (day, week_ago, day)):
         if r["id"] not in drop_ids and r["price"] <= r["announced"]:
-            recent.append({**dict(r), "was": None})
-
-    today_label = date.fromisoformat(day).strftime("%A %-d %B %Y")
-    _write(os.path.join(out_dir, "index.html"), env.get_template("index.html").render(
-        **common, root="", drops=drops, recent=recent[:12], today_label=today_label))
+            recent.append(tag({**dict(r), "was": None}, niche_brands))
 
     products = _current_products(db, day)
     by_name = {}
     for p in products:
+        tag(p, niche_brands)
         by_name.setdefault((p["brand"], p["name"]), []).append(p)
 
-    # One SEO page per product listing
+    # Price history for every listing (used by product pages and the catalogue)
     month_ago = (date.fromisoformat(day) - timedelta(days=30)).isoformat()
     for p in products:
         pts = history(db, p["id"], 90)
-        low = [pr for d_, pr in pts if d_ >= month_ago]
-        p["low_30"] = min(low) if low else None
-        p["chart"] = price_chart(pts, sym)
+        p["pts"] = pts
+        month = [pr for d_, pr in pts if d_ >= month_ago]
+        past = [pr for d_, pr in pts if month_ago <= d_ < day]
+        p["low_30"] = min(month) if month else None
+        p["usual"] = statistics.median(past) if past else None
+
+    catalogue = _catalogue(products, sym)
+    _write(os.path.join(out_dir, "catalog.json"), json.dumps(catalogue, separators=(",", ":")))
+    counts = {"all": len(catalogue), "brands": len({c["b"] for c in catalogue}),
+              "retailers": len({p["merchant"] for p in products})}
+
+    today_label = date.fromisoformat(day).strftime("%A %-d %B %Y")
+    drop_brands = sorted({d["brand"] for d in drops})
+    _write(os.path.join(out_dir, "index.html"), env.get_template("index.html").render(
+        **common, root="", drops=drops, recent=recent[:12], today_label=today_label,
+        counts=counts, drop_brands=drop_brands, top=catalogue[:8]))
+
+    # Browse pages: shop all plus collections. First 24 rendered for search engines, the rest load from JSON.
+    brand_list = sorted({c["b"] for c in catalogue})
+    for slug, heading, intro, preset in COLLECTIONS:
+        first = [c for c in catalogue if _match(c, preset)]
+        _write(os.path.join(out_dir, f"{slug}.html"), env.get_template("browse.html").render(
+            **common, root="", heading=heading, intro=intro, canon=f"{slug}.html", slug=slug,
+            preset=json.dumps(preset), first=first[:24], total=len(first), brand_list=brand_list))
+
+    # One SEO page per product listing
+    for p in products:
+        p["chart"] = price_chart(p["pts"], sym)
         p["brand_slug"] = slugify(p["brand"])
         p["jsonld"] = json.dumps({
             "@context": "https://schema.org", "@type": "Product",
@@ -103,22 +175,23 @@ def build_site(db, cfg, day, drops, out_dir, demo=False):
                        "availability": "https://schema.org/InStock", "url": p["url"],
                        "seller": {"@type": "Organization", "name": p["merchant"]}},
         }).replace("</", "<\\/")
-        others = sorted([o for o in by_name[(p["brand"], p["name"])] if o["id"] != p["id"]],
-                        key=lambda o: o["price"])
+        compare = sorted(by_name[(p["brand"], p["name"])], key=lambda o: o["price"])
+        more = [c for c in catalogue if c["b"] == p["brand"] and c["n"] != p["name"]][:4]
         _write(os.path.join(out_dir, "p", f"{p['slug']}.html"),
-               env.get_template("product.html").render(**common, root="../", p=p, others=others))
+               env.get_template("product.html").render(**common, root="../", p=p, compare=compare,
+                                                        cheapest=compare[0], more=more))
 
     # Brand pages and brand index
     brands = {}
-    for p in products:
-        brands.setdefault(p["brand"], []).append({**p, "was": None})
+    for c in catalogue:
+        brands.setdefault(c["b"], []).append(c)
     for brand, items in brands.items():
-        items.sort(key=lambda x: x["price"])
+        items = sorted(items, key=lambda x: x["p"])
         _write(os.path.join(out_dir, "b", f"{slugify(brand)}.html"), env.get_template("listing.html").render(
             **common, root="../", heading=f"{brand} fragrance prices",
-            intro=f"Today's prices for {brand} fragrances across UK retailers, cheapest first.",
+            intro=f"Today's cheapest UK prices for {len(items)} {brand} fragrances, lowest first.",
             canon=f"b/{slugify(brand)}.html", items=items, links=[]))
-    links = [{"href": f"b/{slugify(b)}.html", "label": b, "note": f"{len(v)} listings"}
+    links = [{"href": f"b/{slugify(b)}.html", "label": b, "note": f"{len(v)}"}
              for b, v in sorted(brands.items())]
     _write(os.path.join(out_dir, "brands.html"), env.get_template("listing.html").render(
         **common, root="", heading="All brands", canon="brands.html",
@@ -129,7 +202,8 @@ def build_site(db, cfg, day, drops, out_dir, demo=False):
 
     # Sitemap and robots for search engines
     base = site["base_url"].rstrip("/")
-    urls = ["index.html", "brands.html"] + content_urls + [f"b/{slugify(b)}.html" for b in brands] + \
+    urls = ["index.html", "brands.html"] + [f"{c[0]}.html" for c in COLLECTIONS] + content_urls + \
+           [f"b/{slugify(b)}.html" for b in brands] + \
            [f"p/{p['slug']}.html" for p in products]
     sitemap = "".join(f"<url><loc>{escape(base)}/{u}</loc><lastmod>{day}</lastmod></url>" for u in urls)
     _write(os.path.join(out_dir, "sitemap.xml"),
