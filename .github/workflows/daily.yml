@@ -45,6 +45,8 @@ jobs:
       - name: Pull feeds, detect drops, build site, email, social cards
         env:
           AWIN_FEED_URL: ${{ secrets.AWIN_FEED_URL }}
+          AWIN_FEED_URL_2: ${{ secrets.AWIN_FEED_URL_2 }}
+          AWIN_FEED_URL_3: ${{ secrets.AWIN_FEED_URL_3 }}
           BUTTONDOWN_API_KEY: ${{ secrets.BUTTONDOWN_API_KEY }}
           SIGNUP_FORM_ACTION: ${{ secrets.SIGNUP_FORM_ACTION }}
         run: python run.py
