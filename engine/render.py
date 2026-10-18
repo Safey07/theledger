@@ -95,6 +95,8 @@ def _catalogue(products, sym):
             "g": best["gender"], "k": 1 if best["niche"] else 0, "r": len(listings),
             "m": best["merchant"], "i": best["image"] or "", "c": best["conc"], "h": best["shape"],
             "v": best["verdict"]["k"], "f": (best.get("notes") or {}).get("f", ""),
+            "x": " ".join((best.get("notes") or {}).get(k_, []) and " ".join((best.get("notes") or {}).get(k_, []))
+                          for k_ in ("t", "h", "b")).lower(),
         })
     items.sort(key=lambda x: (-x["d"], x["b"], x["n"]))
     return items
