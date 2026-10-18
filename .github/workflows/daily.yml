@@ -28,6 +28,16 @@ jobs:
 
       - run: pip install -r requirements.txt
 
+      - name: Install headless browser and video tools
+        run: |
+          python -m playwright install --with-deps chromium
+          sudo apt-get install -y ffmpeg >/dev/null 2>&1 || true
+
+      - uses: actions/cache@v4
+        with:
+          path: .cache/fonts
+          key: fonts-v1
+
       - name: Pull feeds, detect drops, build site, email, social cards
         env:
           AWIN_FEED_URL: ${{ secrets.AWIN_FEED_URL }}
@@ -46,7 +56,7 @@ jobs:
       - name: Keep social cards for download
         uses: actions/upload-artifact@v4
         with:
-          name: social-cards
+          name: social-cards-and-reels
           path: output/social
           retention-days: 14
 
@@ -55,3 +65,10 @@ jobs:
           path: output/site
 
       - uses: actions/deploy-pages@v4
+
+      - name: Post today's top drop to Instagram
+        env:
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          GH_SECRETS_TOKEN: ${{ secrets.GH_SECRETS_TOKEN }}
+        run: python post_instagram.py
