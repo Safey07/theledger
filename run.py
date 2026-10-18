@@ -47,7 +47,7 @@ def main():
     cfg["signup_action"] = os.environ.get("SIGNUP_FORM_ACTION", "#")
     out = os.path.join(HERE, "output")
 
-    if not args.demo and not all(data._expand_env(f["url"]) for f in cfg["feeds"]):
+    if not args.demo and not any(data._expand_env(f["url"]) for f in cfg["feeds"]):
         print("No feed URL set yet, building the demo site instead.")
         args.demo = True
 
