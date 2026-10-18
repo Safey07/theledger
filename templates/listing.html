@@ -6,7 +6,7 @@
 <h1>{{ heading }}</h1>
 <p class="lede">{{ intro }}</p>
 {% if links %}
-<input class="search" type="search" placeholder="Find a brand" aria-label="Find a brand" oninput="var q=this.value.toLowerCase();document.querySelectorAll('.brandlist a').forEach(function(a){a.style.display=a.textContent.toLowerCase().indexOf(q)>-1?'':'none'})">
+<input class="search brandsearch" type="search" placeholder="Find a brand" aria-label="Find a brand" oninput="var q=this.value.toLowerCase();document.querySelectorAll('.brandlist a').forEach(function(a){a.style.display=a.textContent.toLowerCase().indexOf(q)>-1?'':'none'})">
 <div class="brandlist">{% for l in links %}<a href="{{ root }}{{ l.href }}">{{ l.label }} <span>{{ l.note }}</span></a>{% endfor %}</div>
 {% endif %}
 {% if items %}<div class="grid">{% for c in items %}{% include "_ccard.html" %}{% endfor %}</div>{% endif %}
