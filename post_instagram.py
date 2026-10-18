@@ -87,7 +87,11 @@ def main():
         return
     manifest = json.load(open(manifest_path))
     if manifest.get("demo"):
-        print("Demo data. Never posting invented prices. Skipping.")
+        try:
+            me = call("GET", f"/{version}/me", token, fields="user_id,username")
+            print(f"Instagram connected as @{me.get('username')}. Demo prices today, so nothing was posted.")
+        except RuntimeError as err:
+            sys.exit(f"Instagram connection check failed: {err}")
         return
     reels = [r for r in manifest.get("reels", []) if r.get("url")][: icfg.get("posts_per_day", 1)]
     if not reels:
