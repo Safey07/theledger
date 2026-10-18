@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% from "_bottle.html" import bottle %}
 {% block title %}{{ p.brand }} {{ p.name }}: cheapest UK price and history | {{ site.name }}{% endblock %}
-{% block desc %}{{ p.brand }} {{ p.name }} from {{ site.currency_symbol }}{{ "%.2f"|format(cheapest.price) }} at {{ cheapest.merchant }}. Compare {{ compare|length }} UK retailers and see 90 days of price history.{% endblock %}
+{% block desc %}{% if p.notes %}{{ p.notes.f }} fragrance. {% endif %}{{ p.brand }} {{ p.name }} from {{ site.currency_symbol }}{{ "%.2f"|format(cheapest.price) }} at {{ cheapest.merchant }}. Compare {{ compare|length }} UK retailers and see 90 days of price history.{% endblock %}
 {% block canon %}p/{{ p.slug }}.html{% endblock %}
 {% block body %}
 <p class="crumbs"><a href="{{ root }}shop.html">Shop</a> &nbsp;/&nbsp; <a href="{{ root }}{{ p.gender }}.html">{{ p.gender_label }}</a> &nbsp;/&nbsp; <a href="{{ root }}b/{{ p.brand_slug }}.html">{{ p.brand }}</a></p>
@@ -12,11 +12,24 @@
     <h1>{{ p.name }}</h1>
     <p class="tags"><span>{{ p.gender_label }}</span>{% if p.conc %}<span>{{ p.conc }}</span>{% endif %}{% if p.ml %}<span>{{ p.ml }}ml</span>{% endif %}{% if p.niche %}<span>Niche</span>{% endif %}</p>
     <div class="pricebox">
+      <div class="verdict v-{{ p.verdict.k }}"><b>{{ p.verdict.label }}</b><span>{{ p.verdict.why }}</span></div>
       <div class="row"><span class="now">{{ site.currency_symbol }}{{ "%.2f"|format(p.price) }}</span>{% if p.usual and p.usual > p.price %}<span class="was">{{ site.currency_symbol }}{{ "%.2f"|format(p.usual) }} usual</span>{% endif %}</div>
       <p class="sub">at {{ p.merchant }}{% if p.ml %} &nbsp;·&nbsp; {{ site.currency_symbol }}{{ "%.2f"|format(p.price / p.ml * 10) }} per 10ml{% endif %}{% if p.low_30 is not none %} &nbsp;·&nbsp; 30-day low {{ site.currency_symbol }}{{ "%.2f"|format(p.low_30) }}{% endif %}</p>
       {% if cheapest.id != p.id %}<p class="note">Cheaper today: <a href="{{ root }}p/{{ cheapest.slug }}.html">{{ site.currency_symbol }}{{ "%.2f"|format(cheapest.price) }} at {{ cheapest.merchant }}</a></p>{% endif %}
       <a class="btn" href="{{ p.url }}" rel="sponsored nofollow noopener" target="_blank">Buy at {{ p.merchant }}</a>
     </div>
+    {% if p.notes %}
+    <div class="scent">
+      <p class="scent-v">{{ p.notes.v }}</p>
+      <dl>
+        <dt>Family</dt><dd>{{ p.notes.f }}</dd>
+        <dt>Opens with</dt><dd>{{ p.notes.t|join(", ") }}</dd>
+        <dt>Heart</dt><dd>{{ p.notes.h|join(", ") }}</dd>
+        <dt>Dries down to</dt><dd>{{ p.notes.b|join(", ") }}</dd>
+        <dt>Best for</dt><dd>{{ p.notes.s }}</dd>
+      </dl>
+    </div>
+    {% endif %}
     <p class="lede" style="font-size:13px;margin:0">We call a price a drop only when it is at least 10% and £5 below this bottle's own 30-day median. Links may earn us a commission.</p>
   </div>
 </div>
