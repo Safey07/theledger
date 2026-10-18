@@ -21,15 +21,30 @@ detection:
 # Product feeds. Each one is a CSV in Awin's product-feed format.
 # url can use ${ENV_VAR} so keys never live in the repo.
 # In demo mode the engine reads sample_data/ instead.
+# One Awin "Create-a-Feed" URL can hold every retailer you have joined.
+# The extra slots are optional; empty ones are skipped.
 feeds:
   - name: "awin_main"
     url: "${AWIN_FEED_URL}"
     format: "awin"
+  - name: "awin_2"
+    url: "${AWIN_FEED_URL_2}"
+    format: "awin"
+  - name: "awin_3"
+    url: "${AWIN_FEED_URL_3}"
+    format: "awin"
 
-# Only keep products whose category or name matches these words
+# Keep anything someone would buy as a fragrance: bottles, minis, gift sets, discovery sets, mists.
+# Whole-word matching. Excludes skincare, bath and home scent.
 filters:
-  include_keywords: ["fragrance", "perfume", "parfum", "eau de", "cologne", "edp", "edt"]
-  exclude_keywords: ["sample", "tester", "body lotion", "shower gel", "deodorant"]
+  include_keywords: ["fragrance", "fragrances", "perfume", "perfumes", "parfum", "eau de parfum", "eau de toilette",
+                     "eau de cologne", "cologne", "edp", "edt", "edc", "extrait", "elixir", "aftershave",
+                     "after shave", "eau fraiche", "body mist", "hair mist", "perfume oil", "attar",
+                     "discovery set", "gift set", "miniature", "travel spray"]
+  exclude_keywords: ["sample", "vial", "body lotion", "body cream", "shower gel", "shower cream", "bath",
+                     "deodorant", "deo", "antiperspirant", "soap", "candle", "diffuser", "reed diffuser",
+                     "room spray", "wax melt", "home fragrance", "car freshener", "laundry", "fabric",
+                     "shampoo", "conditioner", "serum", "cleanser", "face", "moisturiser", "balm", "aftershave balm", "lip", "nail"]
 
 # Email digest. Leave provider as "none" to only write the HTML file.
 email:
