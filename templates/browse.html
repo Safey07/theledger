@@ -13,9 +13,9 @@
   <div class="selects">
     <select id="brand" aria-label="Brand"><option value="">All brands</option>{% for b in brand_list %}<option>{{ b }}</option>{% endfor %}</select>
     <select id="max" aria-label="Price"><option value="">Any price</option><option value="50">Under £50</option><option value="75">Under £75</option><option value="100">Under £100</option><option value="150">Under £150</option><option value="250">Under £250</option></select>
-    <select id="type" aria-label="Type"><option value="">Designer and niche</option><option value="0">Designer only</option><option value="1">Niche only</option></select>
-    <label class="tog"><input type="checkbox" id="deals"> On offer only</label>
+    <select id="type" aria-label="Type"><option value="">All types</option><option value="0">Designer</option><option value="1">Niche</option></select>
     <select id="sort" aria-label="Sort"><option value="d">Biggest saving</option><option value="pa">Price: low to high</option><option value="pd">Price: high to low</option><option value="az">Brand A to Z</option></select>
+    <label class="tog"><input type="checkbox" id="deals"> Offers only</label>
   </div>
 </div>
 <p class="count" id="count">{{ total }} fragrances</p>
@@ -31,20 +31,18 @@
   var grid=$('grid'), more=$('more'), count=$('count'), none=$('none');
   function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
   function bottle(brand,conc,h){
-    var b=brand.toUpperCase(), fs=b.length<=10?8.5:(b.length<=14?6.8:5.4), s='<svg class="bottle" viewBox="0 0 120 160" aria-hidden="true">';
-    if(h===1){s+='<rect x="47" y="12" width="26" height="26" rx="3" class="cap"/><rect x="54" y="38" width="12" height="10" class="neck"/><ellipse cx="60" cy="102" rx="44" ry="46" class="glass"/><ellipse cx="60" cy="102" rx="44" ry="46" class="edge"/><rect x="24" y="92" width="72" height="26" rx="2" class="label"/>';}
-    else if(h===2){s+='<rect x="42" y="16" width="36" height="28" rx="4" class="cap"/><rect x="53" y="44" width="14" height="8" class="neck"/><rect x="16" y="52" width="88" height="94" rx="14" class="glass"/><rect x="16" y="52" width="88" height="94" rx="14" class="edge"/><rect x="24" y="88" width="72" height="26" rx="2" class="label"/>';}
-    else{s+='<rect x="49" y="8" width="22" height="30" rx="3" class="cap"/><rect x="54" y="38" width="12" height="9" class="neck"/><rect x="28" y="47" width="64" height="104" rx="7" class="glass"/><rect x="28" y="47" width="64" height="104" rx="7" class="edge"/><rect x="33" y="86" width="54" height="28" rx="2" class="label"/>';}
-    var y1=h===1?104:(h===2?100:99), y2=h===1?113:109;
-    s+='<text x="60" y="'+y1+'" font-size="'+fs+'" class="lb">'+esc(b.slice(0,22))+'</text>';
-    if(conc) s+='<text x="60" y="'+y2+'" font-size="5.6" class="lc">'+esc(conc.toUpperCase())+'</text>';
+    var b=brand.toUpperCase(), fs=b.length<=8?9:(b.length<=12?7.2:(b.length<=17?5.8:4.8)), c=conc?conc.toUpperCase():'';
+    var s='<svg class="bottle" viewBox="0 0 120 170" aria-hidden="true">', lb=esc(b.slice(0,20)), lc=esc(c);
+    if(h===1){s+='<rect x="48" y="10" width="24" height="24" rx="3" class="cap"/><rect x="54" y="34" width="12" height="10" class="neck"/><ellipse cx="60" cy="104" rx="46" ry="52" class="glass"/><ellipse cx="60" cy="104" rx="46" ry="52" class="edge"/><rect x="20" y="90" width="80" height="30" rx="2" class="label"/><text x="60" y="103" font-size="'+fs+'" class="lb">'+lb+'</text>'+(c?'<text x="60" y="114" font-size="5.2" class="lc">'+lc+'</text>':'');}
+    else if(h===2){s+='<rect x="42" y="14" width="36" height="26" rx="4" class="cap"/><rect x="53" y="40" width="14" height="8" class="neck"/><rect x="14" y="48" width="92" height="108" rx="14" class="glass"/><rect x="14" y="48" width="92" height="108" rx="14" class="edge"/><rect x="20" y="88" width="80" height="30" rx="2" class="label"/><text x="60" y="101" font-size="'+fs+'" class="lb">'+lb+'</text>'+(c?'<text x="60" y="112" font-size="5.2" class="lc">'+lc+'</text>':'');}
+    else{s+='<rect x="49" y="6" width="22" height="30" rx="3" class="cap"/><rect x="54" y="36" width="12" height="9" class="neck"/><rect x="26" y="45" width="68" height="116" rx="7" class="glass"/><rect x="26" y="45" width="68" height="116" rx="7" class="edge"/><rect x="30" y="86" width="60" height="30" rx="2" class="label"/><text x="60" y="99" font-size="'+(fs*0.9)+'" class="lb">'+lb+'</text>'+(c?'<text x="60" y="110" font-size="4.8" class="lc">'+lc+'</text>':'');}
     return s+'</svg>';
   }
   function card(c){
-    return '<a class="card" href="p/'+c.s+'.html"><div class="thumb">'+(c.i?'<img src="'+esc(c.i)+'" alt="'+esc(c.b+' '+c.n)+'" loading="lazy">':bottle(c.b,c.c,c.h))+
-      (c.d?'<span class="pct">−'+c.d+'%</span>':'')+'</div><div class="brand">'+esc(c.b)+'</div><div class="name">'+esc(c.n)+'</div>'+
-      '<div class="prices"><span class="now">'+SYM+c.p.toFixed(2)+'</span>'+(c.u?'<span class="was">'+SYM+c.u.toFixed(2)+'</span>':'')+'</div>'+
-      '<div class="shop">'+(c.r>1?'Cheapest of '+c.r+' retailers · ':'')+esc(c.m)+'</div></a>';
+    return '<a class="card" href="p/'+c.s+'.html"><div class="thumb">'+(c.i?'<img src="'+esc(c.i)+'" alt="" loading="lazy" onerror="this.remove()">':'')+bottle(c.b,c.c,c.h)+
+      (c.d?'<span class="pct">\u2212'+c.d+'%</span>':'')+'</div><div class="info"><div class="brand">'+esc(c.b)+'</div><div class="name">'+esc(c.n)+'</div>'+
+      '<div class="row"><span class="now">'+SYM+c.p.toFixed(2)+'</span>'+(c.u?'<span class="was">'+SYM+c.u.toFixed(2)+'</span>':'')+'</div>'+
+      '<div class="meta"><span>'+esc(c.m)+'</span>'+(c.r>1?'<span class="dot">'+c.r+' retailers</span>':'')+'</div></div></a>';
   }
   function filter(){
     var q=st.q.toLowerCase().trim(), mx=st.max?+st.max:0;
