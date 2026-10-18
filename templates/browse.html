@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}{{ heading }} | {{ site.name }}{% endblock %}
+{% block desc %}{{ intro }}{% endblock %}
+{% block canon %}{{ canon }}{% endblock %}
+{% block body %}
+<h1>{{ heading }}</h1>
+<p class="lede">{{ intro }}</p>
+<div class="toolbar browse" id="bar">
+  <input class="search" type="search" id="q" placeholder="Search brand or fragrance" aria-label="Search">
+  <div class="chips" role="group" aria-label="Who for">
+    <button class="chip" data-g="">All</button><button class="chip" data-g="men">For him</button><button class="chip" data-g="women">For her</button><button class="chip" data-g="unisex">Unisex</button>
+  </div>
+  <div class="selects">
+    <select id="brand" aria-label="Brand"><option value="">All brands</option>{% for b in brand_list %}<option>{{ b }}</option>{% endfor %}</select>
+    <select id="max" aria-label="Price"><option value="">Any price</option><option value="50">Under £50</option><option value="75">Under £75</option><option value="100">Under £100</option><option value="150">Under £150</option><option value="250">Under £250</option></select>
+    <select id="type" aria-label="Type"><option value="">Designer and niche</option><option value="0">Designer only</option><option value="1">Niche only</option></select>
+    <label class="tog"><input type="checkbox" id="deals"> On offer only</label>
+    <select id="sort" aria-label="Sort"><option value="d">Biggest saving</option><option value="pa">Price: low to high</option><option value="pd">Price: high to low</option><option value="az">Brand A to Z</option></select>
+  </div>
+</div>
+<p class="count" id="count">{{ total }} fragrances</p>
+<div class="grid" id="grid">{% for c in first %}{% include "_ccard.html" %}{% endfor %}</div>
+<p class="empty" id="none" hidden>Nothing matches those filters. Try widening the price or clearing the search.</p>
+<p class="more"><button class="btn ghost" id="more"{% if total <= 24 %} hidden{% endif %}>Show more</button></p>
+
+<script>
+(function(){
+  var SYM={{ site.currency_symbol|tojson }}, PRESET={{ preset|safe }}, PAGE=48;
+  var st=Object.assign({g:'',b:'',max:'',k:'',deals:false,q:'',sort:'d'}, PRESET.g?{g:PRESET.g}:{}, PRESET.k?{k:'1'}:{}, PRESET.max?{max:String(PRESET.max)}:{});
+  var all=[], list=[], shown=0, $=function(id){return document.getElementById(id)};
+  var grid=$('grid'), more=$('more'), count=$('count'), none=$('none');
+  function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+  function bottle(brand,conc,h){
+    var b=brand.toUpperCase(), fs=b.length<=10?8.5:(b.length<=14?6.8:5.4), s='<svg class="bottle" viewBox="0 0 120 160" aria-hidden="true">';
+    if(h===1){s+='<rect x="47" y="12" width="26" height="26" rx="3" class="cap"/><rect x="54" y="38" width="12" height="10" class="neck"/><ellipse cx="60" cy="102" rx="44" ry="46" class="glass"/><ellipse cx="60" cy="102" rx="44" ry="46" class="edge"/><rect x="24" y="92" width="72" height="26" rx="2" class="label"/>';}
+    else if(h===2){s+='<rect x="42" y="16" width="36" height="28" rx="4" class="cap"/><rect x="53" y="44" width="14" height="8" class="neck"/><rect x="16" y="52" width="88" height="94" rx="14" class="glass"/><rect x="16" y="52" width="88" height="94" rx="14" class="edge"/><rect x="24" y="88" width="72" height="26" rx="2" class="label"/>';}
+    else{s+='<rect x="49" y="8" width="22" height="30" rx="3" class="cap"/><rect x="54" y="38" width="12" height="9" class="neck"/><rect x="28" y="47" width="64" height="104" rx="7" class="glass"/><rect x="28" y="47" width="64" height="104" rx="7" class="edge"/><rect x="33" y="86" width="54" height="28" rx="2" class="label"/>';}
+    var y1=h===1?104:(h===2?100:99), y2=h===1?113:109;
+    s+='<text x="60" y="'+y1+'" font-size="'+fs+'" class="lb">'+esc(b.slice(0,22))+'</text>';
+    if(conc) s+='<text x="60" y="'+y2+'" font-size="5.6" class="lc">'+esc(conc.toUpperCase())+'</text>';
+    return s+'</svg>';
+  }
+  function card(c){
+    return '<a class="card" href="p/'+c.s+'.html"><div class="thumb">'+(c.i?'<img src="'+esc(c.i)+'" alt="'+esc(c.b+' '+c.n)+'" loading="lazy">':bottle(c.b,c.c,c.h))+
+      (c.d?'<span class="pct">−'+c.d+'%</span>':'')+'</div><div class="brand">'+esc(c.b)+'</div><div class="name">'+esc(c.n)+'</div>'+
+      '<div class="prices"><span class="now">'+SYM+c.p.toFixed(2)+'</span>'+(c.u?'<span class="was">'+SYM+c.u.toFixed(2)+'</span>':'')+'</div>'+
+      '<div class="shop">'+(c.r>1?'Cheapest of '+c.r+' retailers · ':'')+esc(c.m)+'</div></a>';
+  }
+  function filter(){
+    var q=st.q.toLowerCase().trim(), mx=st.max?+st.max:0;
+    list=all.filter(function(c){
+      return (!st.g||c.g===st.g)&&(!st.b||c.b===st.b)&&(!mx||c.p<=mx)&&(st.k===''||String(c.k)===st.k)&&(!st.deals||c.d>0)&&
+        (!q||(c.b+' '+c.n).toLowerCase().indexOf(q)>-1);
+    });
+    var s=st.sort;
+    list.sort(function(a,b){return s==='pa'?a.p-b.p:s==='pd'?b.p-a.p:s==='az'?(a.b+a.n).localeCompare(b.b+b.n):(b.d-a.d)||(a.p-b.p)});
+    grid.innerHTML=''; shown=0; render();
+    count.textContent=list.length+(list.length===1?' fragrance':' fragrances');
+    none.hidden=list.length>0;
+  }
+  function render(){
+    grid.insertAdjacentHTML('beforeend', list.slice(shown,shown+PAGE).map(card).join(''));
+    shown=Math.min(shown+PAGE,list.length); more.hidden=shown>=list.length;
+  }
+  function sync(){
+    document.querySelectorAll('#bar .chip').forEach(function(b){b.classList.toggle('on',(b.dataset.g||'')===st.g)});
+    $('brand').value=st.b; $('max').value=st.max; $('type').value=st.k; $('deals').checked=st.deals; $('sort').value=st.sort;
+  }
+  document.querySelectorAll('#bar .chip').forEach(function(b){b.onclick=function(){st.g=b.dataset.g||'';sync();filter();}});
+  $('q').oninput=function(){st.q=this.value;filter()};
+  $('brand').onchange=function(){st.b=this.value;filter()};
+  $('max').onchange=function(){st.max=this.value;filter()};
+  $('type').onchange=function(){st.k=this.value;filter()};
+  $('deals').onchange=function(){st.deals=this.checked;filter()};
+  $('sort').onchange=function(){st.sort=this.value;filter()};
+  more.onclick=render;
+  sync();
+  fetch('catalog.json').then(function(r){return r.json()}).then(function(d){all=d;filter();}).catch(function(){});
+})();
+</script>
+{% endblock %}
