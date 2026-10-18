@@ -1,21 +1,22 @@
 {% macro bottle(brand, conc, shape) -%}
 {%- set b = brand|upper -%}
-{%- set fs = 8.5 if b|length <= 10 else (6.8 if b|length <= 14 else 5.4) -%}
-<svg class="bottle" viewBox="0 0 120 160" aria-hidden="true">
+{%- set fs = 9 if b|length <= 8 else (7.2 if b|length <= 12 else (5.8 if b|length <= 17 else 4.8)) -%}
+<svg class="bottle" viewBox="0 0 120 170" aria-hidden="true">
 {%- if shape == 1 %}
-<rect x="47" y="12" width="26" height="26" rx="3" class="cap"/><rect x="54" y="38" width="12" height="10" class="neck"/>
-<ellipse cx="60" cy="102" rx="44" ry="46" class="glass"/><ellipse cx="60" cy="102" rx="44" ry="46" class="edge"/>
-<rect x="24" y="92" width="72" height="26" rx="2" class="label"/>
+<rect x="48" y="10" width="24" height="24" rx="3" class="cap"/><rect x="54" y="34" width="12" height="10" class="neck"/>
+<ellipse cx="60" cy="104" rx="46" ry="52" class="glass"/><ellipse cx="60" cy="104" rx="46" ry="52" class="edge"/>
+<rect x="20" y="90" width="80" height="30" rx="2" class="label"/>
+<text x="60" y="103" font-size="{{ fs }}" class="lb">{{ b[:20] }}</text>{% if conc %}<text x="60" y="114" font-size="5.2" class="lc">{{ conc|upper }}</text>{% endif %}
 {%- elif shape == 2 %}
-<rect x="42" y="16" width="36" height="28" rx="4" class="cap"/><rect x="53" y="44" width="14" height="8" class="neck"/>
-<rect x="16" y="52" width="88" height="94" rx="14" class="glass"/><rect x="16" y="52" width="88" height="94" rx="14" class="edge"/>
-<rect x="24" y="88" width="72" height="26" rx="2" class="label"/>
+<rect x="42" y="14" width="36" height="26" rx="4" class="cap"/><rect x="53" y="40" width="14" height="8" class="neck"/>
+<rect x="14" y="48" width="92" height="108" rx="14" class="glass"/><rect x="14" y="48" width="92" height="108" rx="14" class="edge"/>
+<rect x="20" y="88" width="80" height="30" rx="2" class="label"/>
+<text x="60" y="101" font-size="{{ fs }}" class="lb">{{ b[:20] }}</text>{% if conc %}<text x="60" y="112" font-size="5.2" class="lc">{{ conc|upper }}</text>{% endif %}
 {%- else %}
-<rect x="49" y="8" width="22" height="30" rx="3" class="cap"/><rect x="54" y="38" width="12" height="9" class="neck"/>
-<rect x="28" y="47" width="64" height="104" rx="7" class="glass"/><rect x="28" y="47" width="64" height="104" rx="7" class="edge"/>
-<rect x="33" y="86" width="54" height="28" rx="2" class="label"/>
+<rect x="49" y="6" width="22" height="30" rx="3" class="cap"/><rect x="54" y="36" width="12" height="9" class="neck"/>
+<rect x="26" y="45" width="68" height="116" rx="7" class="glass"/><rect x="26" y="45" width="68" height="116" rx="7" class="edge"/>
+<rect x="30" y="86" width="60" height="30" rx="2" class="label"/>
+<text x="60" y="99" font-size="{{ fs * 0.9 }}" class="lb">{{ b[:20] }}</text>{% if conc %}<text x="60" y="110" font-size="4.8" class="lc">{{ conc|upper }}</text>{% endif %}
 {%- endif %}
-<text x="60" y="{{ 104 if shape == 1 else (100 if shape == 2 else 99) }}" font-size="{{ fs }}" class="lb">{{ b[:22] }}</text>
-{% if conc %}<text x="60" y="{{ 113 if shape == 1 else (109 if shape == 2 else 109) }}" font-size="5.6" class="lc">{{ conc|upper }}</text>{% endif %}
 </svg>
 {%- endmacro %}
