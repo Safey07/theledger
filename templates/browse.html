@@ -48,7 +48,7 @@
     var q=st.q.toLowerCase().trim(), mx=st.max?+st.max:0;
     list=all.filter(function(c){
       return (!st.g||c.g===st.g)&&(!st.b||c.b===st.b)&&(!mx||c.p<=mx)&&(st.k===''||String(c.k)===st.k)&&(!st.deals||c.v==='buy')&&
-        (!q||(c.b+' '+c.n+' '+(c.f||'')).toLowerCase().indexOf(q)>-1);
+        (!q||(c.b+' '+c.n+' '+(c.f||'')+' '+(c.x||'')).toLowerCase().indexOf(q)>-1);
     });
     var s=st.sort;
     list.sort(function(a,b){return s==='pa'?a.p-b.p:s==='pd'?b.p-a.p:s==='az'?(a.b+a.n).localeCompare(b.b+b.n):(b.d-a.d)||(a.p-b.p)});
