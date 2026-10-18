@@ -1,11 +1,9 @@
 {% from "_bottle.html" import bottle %}<a class="card" href="{{ root }}p/{{ c.s }}.html">
-  <div class="thumb">{% if c.i %}<img src="{{ c.i }}" alt="{{ c.b }} {{ c.n }}" loading="lazy">{% else %}{{ bottle(c.b, c.c, c.h) }}{% endif %}
-    {% if c.d %}<span class="pct">−{{ c.d }}%</span>{% endif %}</div>
-  <div class="brand">{{ c.b }}</div>
-  <div class="name">{{ c.n }}</div>
-  <div class="prices">
-    <span class="now">{{ site.currency_symbol }}{{ "%.2f"|format(c.p) }}</span>
-    {% if c.u %}<span class="was">{{ site.currency_symbol }}{{ "%.2f"|format(c.u) }}</span>{% endif %}
+  <div class="thumb">{% if c.i %}<img src="{{ c.i }}" alt="" loading="lazy" onerror="this.remove()">{% endif %}{{ bottle(c.b, c.c, c.h) }}{% if c.d %}<span class="pct">−{{ c.d }}%</span>{% endif %}</div>
+  <div class="info">
+    <div class="brand">{{ c.b }}</div>
+    <div class="name">{{ c.n }}</div>
+    <div class="row"><span class="now">{{ site.currency_symbol }}{{ "%.2f"|format(c.p) }}</span>{% if c.u %}<span class="was">{{ site.currency_symbol }}{{ "%.2f"|format(c.u) }}</span>{% endif %}</div>
+    <div class="meta"><span>{{ c.m }}</span>{% if c.r > 1 %}<span class="dot">{{ c.r }} retailers</span>{% endif %}</div>
   </div>
-  <div class="shop">{% if c.r > 1 %}Cheapest of {{ c.r }} retailers · {% endif %}{{ c.m }}</div>
 </a>
