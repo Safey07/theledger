@@ -9,6 +9,8 @@ import urllib.request
 import gzip
 from datetime import date, timedelta
 
+from .classify import clean_brand, clean_name
+
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS products (
     id TEXT PRIMARY KEY,
@@ -81,21 +83,36 @@ def parse_awin(text):
         }
 
 
+def _words(words):
+    return re.compile(r"\b(" + "|".join(re.escape(w) for w in words) + r")\b") if words else None
+
+
 def keep(product, filters):
+    """Whole-word matching, so 'car' never removes 'Carolina Herrera'."""
     hay = f"{product['name']} {product['category']}".lower()
-    if any(word in hay for word in filters.get("exclude_keywords", [])):
+    ex, inc = _words(filters.get("exclude_keywords", [])), _words(filters.get("include_keywords", []))
+    if ex and ex.search(hay):
         return False
-    return any(word in hay for word in filters.get("include_keywords", []))
+    return bool(inc and inc.search(hay))
 
 
 def ingest(db, sources, filters, day):
     """Store today's price for every matching product. Returns count."""
     count = 0
     for source in sources:
-        text = read_feed(_expand_env(source))
+        source = _expand_env(source)
+        if not source:          # optional extra feed not set up yet
+            continue
+        try:
+            text = read_feed(source)
+        except Exception as err:   # one broken retailer feed must not stop the others
+            print(f"Feed failed, skipping: {str(err)[:120]}")
+            continue
         for p in parse_awin(text):
             if not keep(p, filters):
                 continue
+            p["brand"] = clean_brand(p["brand"])
+            p["name"] = clean_name(p["brand"], p["name"])
             db.execute(
                 """INSERT INTO products (id,name,brand,merchant,category,url,image,slug,first_seen)
                    VALUES (?,?,?,?,?,?,?,?,?)
