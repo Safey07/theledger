@@ -79,8 +79,14 @@ def main():
                                   publish=not args.demo)
     except Exception as err:  # a video problem must never stop the site updating
         print(f"video: skipped ({err})")
+    evergreen = []
+    try:
+        from engine import stills
+        evergreen = stills.build_all(cfg, os.path.join(out, "site"))
+    except Exception as err:  # never block the site on an image problem
+        print(f"evergreen posts: skipped ({err})")
     with open(os.path.join(social_dir, "manifest.json"), "w") as fh:
-        json.dump({"day": day, "demo": args.demo, "reels": reels}, fh, indent=2)
+        json.dump({"day": day, "demo": args.demo, "reels": reels, "evergreen": evergreen}, fh, indent=2)
     data.mark_published(db, drops, day)
 
     print(f"{day}: {count} prices stored, {len(drops)} drops, {pages} pages, {cards} social cards, {len(reels)} reels")
