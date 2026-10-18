@@ -4,6 +4,10 @@ on:
   schedule:
     - cron: "17 5 * * *"     # 05:17 UTC every day, before UK breakfast
   workflow_dispatch:          # lets you run it by hand from the Actions tab
+    inputs:
+      evergreen_batch:
+        description: "Evergreen carousels to post if there is no real price data"
+        default: "1"
 
 permissions:
   contents: write
@@ -71,4 +75,5 @@ jobs:
           IG_USER_ID: ${{ secrets.IG_USER_ID }}
           IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
           GH_SECRETS_TOKEN: ${{ secrets.GH_SECRETS_TOKEN }}
+          EVERGREEN_BATCH: ${{ github.event.inputs.evergreen_batch || '1' }}
         run: python post_instagram.py
