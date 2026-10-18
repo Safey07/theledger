@@ -63,13 +63,53 @@ def concentration(name):
     return ""
 
 
-_STRIP = r"\b(eau de parfum|eau de toilette|eau de cologne|extrait de parfum|edp|edt|perfume mist|\d+\s?ml)\b"
+_STRIP = r"\b(eau de parfum|eau de toilette|eau de cologne|extrait de parfum|edp|edt|perfume mist|\d+(\.\d+)?\s?ml)\b"
+
+
+BRAND_ALIASES = {"ysl": "Yves Saint Laurent", "yves saint laurent": "Yves Saint Laurent",
+                 "saint laurent": "Yves Saint Laurent", "ck": "Calvin Klein", "d&g": "Dolce & Gabbana",
+                 "dolce and gabbana": "Dolce & Gabbana", "dolce&gabbana": "Dolce & Gabbana",
+                 "christian dior": "Dior", "dior": "Dior", "chanel": "Chanel", "pdm": "Parfums de Marly",
+                 "mfk": "Maison Francis Kurkdjian", "jpg": "Jean Paul Gaultier"}
+_KEEP_CAPS = {"YSL", "BOSS", "DKNY", "CK", "MFK", "BDK", "EX", "ZARA"}
+
+
+def clean_brand(brand):
+    """'CHANEL' / 'chanel' / 'Christian Dior' -> one spelling, so a brand never splits in two."""
+    b = re.sub(r"\s+", " ", (brand or "").strip())
+    key = b.lower()
+    if key in BRAND_ALIASES:
+        return BRAND_ALIASES[key]
+    if b.isupper() and b not in _KEEP_CAPS and len(b) > 3:
+        b = " ".join(w if w in _KEEP_CAPS else w.capitalize() for w in b.split())
+    return b
+
+
+def clean_name(brand, name):
+    """Drop a leading brand from the product name: 'Dior Sauvage EDT 100ml' -> 'Sauvage EDT 100ml'."""
+    n = re.sub(r"\s+", " ", (name or "").strip())
+    for b in {brand, *[k for k, v in BRAND_ALIASES.items() if v == brand]}:
+        if b and n.lower().startswith(b.lower() + " "):
+            n = n[len(b) + 1:].lstrip(" -:|")
+            break
+    for short, full in (("edp", "Eau de Parfum"), ("edt", "Eau de Toilette"), ("edc", "Eau de Cologne")):
+        n = re.sub(rf"\b{short}\b", full, n, flags=re.I)
+    n = re.sub(r"\s+(natural )?spray\b", "", n, flags=re.I)
+    return n or name
+
+
+def match_key(brand, name):
+    """Same bottle at different retailers -> same key (brand, scent, concentration, size)."""
+    return f"{base_key(brand, name)}|{concentration(name)}|{size_ml(name) or ''}"
 
 
 def base_key(brand, name):
     """'Dior', 'Sauvage Eau de Parfum 100ml' -> 'dior|sauvage'. Used to match scent notes."""
     n = re.sub(_STRIP, "", (name or "").lower())
-    n = re.sub(r"\b(spray|vaporisateur|for men|for women|pour homme|pour femme)\b$", "", n.strip())
+    n = re.sub(r"\s+", " ", n).strip(" -,")
+    n = re.sub(r"\b(natural spray|spray|vaporisateur)\b", "", n).strip()
+    t = re.sub(r"\b(for men|for women|pour homme|pour femme)$", "", n).strip()
+    n = t or n
     n = re.sub(r"\s+", " ", n).strip(" -,")
     if n.endswith(" cologne"):
         n = n[: -len(" cologne")]
