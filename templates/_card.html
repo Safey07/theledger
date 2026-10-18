@@ -1,12 +1,9 @@
-{% from "_bottle.html" import bottle %}<a class="card" href="{{ root }}p/{{ d.slug }}.html" data-g="{{ d.gender }}" data-k="{{ 1 if d.niche else 0 }}" data-p="{{ '%.2f'|format(d.price) }}" data-d="{{ d.pct or 0 }}" data-b="{{ d.brand }}" data-t="{{ (d.brand ~ ' ' ~ d.name)|lower }}">
-  <div class="thumb">{% if d.image %}<img src="{{ d.image }}" alt="{{ d.brand }} {{ d.name }}" loading="lazy">{% else %}{{ bottle(d.brand, d.conc, d.shape) }}{% endif %}
-    {% if d.pct %}<span class="pct">−{{ d.pct }}%</span>{% endif %}</div>
-  <div class="brand">{{ d.brand }}</div>
-  <div class="name">{{ d.name }}</div>
-  <div class="prices">
-    <span class="now">{{ site.currency_symbol }}{{ "%.2f"|format(d.price) }}</span>
-    {% if d.was %}<span class="was">{{ site.currency_symbol }}{{ "%.2f"|format(d.was) }}</span>{% endif %}
+{% from "_bottle.html" import bottle %}<a class="card" href="{{ root }}p/{{ d.slug }}.html" data-g="{{ d.gender }}" data-k="{{ 1 if d.niche else 0 }}" data-p="{{ '%.2f'|format(d.price) }}" data-d="{{ d.pct or 0 }}">
+  <div class="thumb">{% if d.image %}<img src="{{ d.image }}" alt="" loading="lazy" onerror="this.remove()">{% endif %}{{ bottle(d.brand, d.conc, d.shape) }}{% if d.pct %}<span class="pct">−{{ d.pct }}%</span>{% endif %}</div>
+  <div class="info">
+    <div class="brand">{{ d.brand }}</div>
+    <div class="name">{{ d.name }}</div>
+    <div class="row"><span class="now">{{ site.currency_symbol }}{{ "%.2f"|format(d.price) }}</span>{% if d.was %}<span class="was">{{ site.currency_symbol }}{{ "%.2f"|format(d.was) }}</span>{% endif %}</div>
+    <div class="meta">{% if d.all_time_low %}<span class="atl">Lowest tracked</span>{% endif %}<span>{{ d.merchant }}</span></div>
   </div>
-  {% if d.all_time_low %}<div class="atl">Lowest price we've tracked</div>{% endif %}
-  <div class="shop">at {{ d.merchant }}</div>
 </a>
