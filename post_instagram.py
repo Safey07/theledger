@@ -69,6 +69,47 @@ def wait_for_url(url, tries=20):
     return False
 
 
+def _wait_container(cid, token, version):
+    for _ in range(12):
+        time.sleep(15)
+        status = call("GET", f"/{version}/{cid}", token, fields="status_code").get("status_code")
+        if status == "FINISHED":
+            return
+        if status in ("ERROR", "EXPIRED"):
+            raise SystemExit(f"Instagram could not process the media: {status}")
+    raise SystemExit("Instagram took too long to process the media.")
+
+
+def post_evergreen(posts, ig_id, token, version, batch=1):
+    """Publish the next unposted evergreen carousel(s). Tracks progress by caption tag + slug."""
+    if not posts:
+        print("No evergreen posts defined.")
+        return
+    base = f"/{version}/{ig_id}"
+    media = call("GET", f"{base}/media", token, fields="caption,timestamp", limit=50).get("data", [])
+    done = {p["slug"] for p in posts if any(
+        "#theledgernotes" in (m.get("caption") or "") and p["caption"].splitlines()[0] in (m.get("caption") or "")
+        for m in media)}
+    todo = [p for p in posts if p["slug"] not in done][:batch]
+    if not todo:
+        print("All evergreen posts already published.")
+        return
+    for post in todo:
+        for url in post["urls"]:
+            if not wait_for_url(url):
+                raise SystemExit(f"Image not reachable yet: {url}")
+        children = []
+        for url in post["urls"]:
+            item = call("POST", f"{base}/media", token, image_url=url, is_carousel_item="true")
+            children.append(item["id"])
+        box = call("POST", f"{base}/media", token, media_type="CAROUSEL", caption=post["caption"],
+                   children=",".join(children))
+        _wait_container(box["id"], token, version)
+        pub = call("POST", f"{base}/media_publish", token, creation_id=box["id"])
+        print(f"published evergreen carousel '{post['slug']}' as {pub.get('id')}")
+        time.sleep(20)
+
+
 def main():
     ig_id, token = os.environ.get("IG_USER_ID"), os.environ.get("IG_ACCESS_TOKEN")
     if not ig_id or not token:
@@ -87,11 +128,15 @@ def main():
         return
     manifest = json.load(open(manifest_path))
     if manifest.get("demo"):
+        # No real prices yet, so post evergreen carousels instead. Never demo prices.
         try:
             me = call("GET", f"/{version}/me", token, fields="user_id,username")
-            print(f"Instagram connected as @{me.get('username')}. Demo prices today, so nothing was posted.")
+            print(f"Instagram connected as @{me.get('username')}. Demo prices today.")
         except RuntimeError as err:
             sys.exit(f"Instagram connection check failed: {err}")
+        token = refresh_token(token)
+        batch = int(os.environ.get("EVERGREEN_BATCH", "1") or 1)
+        post_evergreen(manifest.get("evergreen", []), ig_id, token, version, batch)
         return
     reels = [r for r in manifest.get("reels", []) if r.get("url")][: icfg.get("posts_per_day", 1)]
     if not reels:
