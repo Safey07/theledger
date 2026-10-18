@@ -1,13 +1,30 @@
 {% extends "base.html" %}
 {% block body %}
-<p class="meta">{{ today_label }}</p>
-<h1>Today's fragrance price drops</h1>
-<p class="lede">Every morning we check thousands of fragrance prices across UK retailers. These are the ones selling well below their usual price.</p>
+<section class="hero">
+  <p class="meta">{{ today_label }}</p>
+  <h1>Today's fragrance price drops</h1>
+  <p class="lede">We track {{ counts.all }} fragrances from {{ counts.brands }} brands across {{ counts.retailers }} UK retailers every morning. These are the ones selling well below their own usual price.</p>
+  <div class="stats"><div><b>{{ drops|length }}</b><span>drops today</span></div><div><b>{{ counts.all }}</b><span>fragrances tracked</span></div><div><b>{{ counts.brands }}</b><span>brands</span></div></div>
+</section>
+
+<nav class="tiles" aria-label="Shop by">
+  {% for slug, heading, intro, preset in collections %}<a href="{{ root }}{{ slug }}.html">{{ {"shop":"Shop all","men":"For him","women":"For her","unisex":"Unisex","niche":"Niche","under-50":"Under £50","under-100":"Under £100"}[slug] }}</a>{% endfor %}
+</nav>
+
 {% if drops %}
-<div class="grid">{% for d in drops %}{% include "_card.html" %}{% endfor %}</div>
+<div class="toolbar" id="dropbar">
+  <div class="chips" role="group" aria-label="Who for">
+    <button class="chip on" data-g="">All</button><button class="chip" data-g="men">For him</button><button class="chip" data-g="women">For her</button><button class="chip" data-g="unisex">Unisex</button><button class="chip" data-k="1">Niche</button>
+  </div>
+  <select aria-label="Sort" data-sort><option value="d">Biggest drop</option><option value="pa">Price: low to high</option><option value="pd">Price: high to low</option></select>
+</div>
+<div class="grid" id="drops">{% for d in drops %}{% include "_card.html" %}{% endfor %}</div>
+<p class="empty" id="dropsnone" hidden>No drops in this filter today. <a href="{{ root }}shop.html">Browse every fragrance</a>.</p>
 {% else %}
-<p class="empty">No significant drops today. Check back tomorrow.</p>
+<p class="empty">No significant drops today. <a href="{{ root }}shop.html">Browse every fragrance at today's lowest price</a>.</p>
 {% endif %}
+
+{% if signup_action %}
 <section class="signup">
   <div><h2>Get the drops by email</h2><p class="lede" style="margin:4px 0 0">One short email each morning. Unsubscribe any time.</p></div>
   <form action="{{ signup_action }}" method="post" target="_blank">
@@ -15,8 +32,41 @@
     <button type="submit">Subscribe</button>
   </form>
 </section>
+{% elif site.instagram %}
+<section class="signup">
+  <div><h2>Get the drops every day</h2><p class="lede" style="margin:4px 0 0">The biggest drop each morning, as a short Reel.</p></div>
+  <a class="btn" href="https://www.instagram.com/{{ site.instagram }}/" target="_blank" rel="noopener">Follow @{{ site.instagram }}</a>
+</section>
+{% endif %}
+
 {% if recent %}
 <h2>Still on sale this week</h2>
 <div class="grid">{% for d in recent %}{% include "_card.html" %}{% endfor %}</div>
 {% endif %}
+
+<h2>Best value right now</h2>
+<p class="lede">The fragrances furthest below their usual price today, at their cheapest retailer.</p>
+<div class="grid">{% for c in top %}{% include "_ccard.html" %}{% endfor %}</div>
+<p style="margin:-20px 0 50px"><a class="btn ghost" href="{{ root }}shop.html">Browse all {{ counts.all }} fragrances</a></p>
+
+<script>
+(function(){
+  var bar=document.getElementById('dropbar'); if(!bar) return;
+  var grid=document.getElementById('drops'), none=document.getElementById('dropsnone');
+  var cards=[].slice.call(grid.children), f={g:'',k:''};
+  function apply(){
+    var shown=0;
+    cards.forEach(function(c){var ok=(!f.g||c.dataset.g===f.g)&&(!f.k||c.dataset.k==='1');c.hidden=!ok;if(ok)shown++;});
+    none.hidden=shown>0;
+  }
+  bar.querySelectorAll('.chip').forEach(function(b){b.onclick=function(){
+    bar.querySelectorAll('.chip').forEach(function(x){x.classList.remove('on')});b.classList.add('on');
+    f.g=b.dataset.g||'';f.k=b.dataset.k||'';apply();};});
+  bar.querySelector('[data-sort]').onchange=function(){
+    var v=this.value;
+    cards.sort(function(a,b){return v==='pa'?a.dataset.p-b.dataset.p:v==='pd'?b.dataset.p-a.dataset.p:b.dataset.d-a.dataset.d});
+    cards.forEach(function(c){grid.appendChild(c)});
+  };
+})();
+</script>
 {% endblock %}
