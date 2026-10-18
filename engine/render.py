@@ -9,7 +9,7 @@ from jinja2 import Environment, FileSystemLoader
 
 import statistics
 
-from .classify import tag
+from .classify import base_key, tag, verdict
 from .content import build_content
 from .data import history, slugify
 
@@ -94,6 +94,7 @@ def _catalogue(products, sym):
             "u": round(usual, 2) if pct >= 5 else None, "d": pct if pct >= 5 else 0,
             "g": best["gender"], "k": 1 if best["niche"] else 0, "r": len(listings),
             "m": best["merchant"], "i": best["image"] or "", "c": best["conc"], "h": best["shape"],
+            "v": best["verdict"]["k"], "f": (best.get("notes") or {}).get("f", ""),
         })
     items.sort(key=lambda x: (-x["d"], x["b"], x["n"]))
     return items
@@ -143,6 +144,16 @@ def build_site(db, cfg, day, drops, out_dir, demo=False):
         past = [pr for d_, pr in pts if month_ago <= d_ < day]
         p["low_30"] = min(month) if month else None
         p["usual"] = statistics.median(past) if past else None
+
+    notes_path = os.path.join(HERE, "content", "notes.yaml")
+    notes = {}
+    if os.path.exists(notes_path):
+        import yaml
+        with open(notes_path, encoding="utf-8") as fh:
+            notes = yaml.safe_load(fh) or {}
+    for p in products:
+        p["notes"] = notes.get(base_key(p["brand"], p["name"]))
+        p["verdict"] = verdict(p["price"], p["pts"], day)
 
     catalogue = _catalogue(products, sym)
     _write(os.path.join(out_dir, "catalog.json"), json.dumps(catalogue, separators=(",", ":")))
