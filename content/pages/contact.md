@@ -9,7 +9,7 @@ We'd like to hear from you, whether it's a question, a price that looks wrong, o
 
 ## Instagram
 
-Follow and message us at [@theledgerruk](https://www.instagram.com/theledgerruk/) for daily drops.
+Follow and message us at [@theledgeruk.co](https://www.instagram.com/theledgeruk.co/) for daily drops.
 
 ## Price corrections
 
