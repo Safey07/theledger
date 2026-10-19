@@ -50,6 +50,9 @@ def main():
         print("No manifest for today. Skipping.")
         return
     manifest = json.load(open(path))
+    if st.posted_today("facebook"):
+        print("Already posted today. Skipping.")
+        return
 
     me = call("GET", f"/{v}/{page}", token, fields="name")
     print(f"Facebook connected as page '{me.get('name')}'.")
