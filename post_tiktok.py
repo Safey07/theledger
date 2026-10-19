@@ -101,6 +101,9 @@ def main():
         print("No manifest for today. Skipping.")
         return
     manifest = json.load(open(path))
+    if st.posted_today("tiktok"):
+        print("Already posted today. Skipping.")
+        return
 
     token = access_token()
     info = _post("/v2/post/publish/creator_info/query/", {}, token).get("data", {})
