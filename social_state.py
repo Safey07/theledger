@@ -22,11 +22,22 @@ def done(platform, key):
     return key in load().get(platform, [])
 
 
+def posted_today(platform):
+    """True if this platform already got its post today. Scheduled retries then skip it;
+    a hand-started run (Run workflow) can still post more."""
+    from datetime import date
+    if os.environ.get("GITHUB_EVENT_NAME") == "workflow_dispatch":
+        return False
+    return load().get("last", {}).get(platform) == date.today().isoformat()
+
+
 def mark(platform, key):
+    from datetime import date
     state = load()
     state.setdefault(platform, [])
     if key not in state[platform]:
         state[platform].append(key)
+    state.setdefault("last", {})[platform] = date.today().isoformat()
     os.makedirs(os.path.dirname(PATH), exist_ok=True)
     with open(PATH, "w", encoding="utf-8") as fh:
         json.dump(state, fh, indent=1)
