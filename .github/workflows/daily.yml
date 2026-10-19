@@ -3,11 +3,16 @@ name: Daily run
 on:
   schedule:
     - cron: "17 5 * * *"     # 05:17 UTC every day, before UK breakfast
+    - cron: "17 11 * * *"    # retry: posts anything that failed this morning
+    - cron: "17 17 * * *"    # retry again in the evening
   workflow_dispatch:          # lets you run it by hand from the Actions tab
     inputs:
       evergreen_batch:
         description: "Evergreen carousels to post if there is no real price data"
         default: "1"
+      tiktok_code:
+        description: "One-off: code from theledgeruk.co.uk/tiktok-callback.html to connect TikTok"
+        default: ""
 
 permissions:
   contents: write
@@ -73,9 +78,57 @@ jobs:
       - uses: actions/deploy-pages@v4
 
       - name: Post today's top drop to Instagram
+        id: ig
         env:
           IG_USER_ID: ${{ secrets.IG_USER_ID }}
           IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
           GH_SECRETS_TOKEN: ${{ secrets.GH_SECRETS_TOKEN }}
           EVERGREEN_BATCH: ${{ github.event.inputs.evergreen_batch || '1' }}
+        continue-on-error: true
         run: python post_instagram.py
+
+      - name: Post to Facebook
+        id: fb
+        env:
+          FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
+          FB_PAGE_TOKEN: ${{ secrets.FB_PAGE_TOKEN }}
+          EVERGREEN_BATCH: ${{ github.event.inputs.evergreen_batch || '1' }}
+        continue-on-error: true
+        run: python post_facebook.py
+
+      - name: Connect TikTok (only when a code is given)
+        if: ${{ github.event.inputs.tiktok_code != '' && github.event.inputs.tiktok_code != null }}
+        env:
+          TIKTOK_CLIENT_KEY: ${{ secrets.TIKTOK_CLIENT_KEY }}
+          TIKTOK_CLIENT_SECRET: ${{ secrets.TIKTOK_CLIENT_SECRET }}
+          GH_SECRETS_TOKEN: ${{ secrets.GH_SECRETS_TOKEN }}
+          CODE: ${{ github.event.inputs.tiktok_code }}
+        run: |
+          echo "::add-mask::$CODE"
+          python post_tiktok.py --exchange "$CODE"
+
+      - name: Post to TikTok
+        id: tt
+        if: ${{ github.event.inputs.tiktok_code == '' || github.event.inputs.tiktok_code == null }}
+        env:
+          TIKTOK_CLIENT_KEY: ${{ secrets.TIKTOK_CLIENT_KEY }}
+          TIKTOK_CLIENT_SECRET: ${{ secrets.TIKTOK_CLIENT_SECRET }}
+          TIKTOK_REFRESH_TOKEN: ${{ secrets.TIKTOK_REFRESH_TOKEN }}
+          GH_SECRETS_TOKEN: ${{ secrets.GH_SECRETS_TOKEN }}
+          EVERGREEN_BATCH: ${{ github.event.inputs.evergreen_batch || '1' }}
+        continue-on-error: true
+        run: python post_tiktok.py
+
+      - name: Remember what was posted
+        if: always()
+        run: |
+          git add data/social_state.json 2>/dev/null || true
+          git commit -m "Social posts $(date -u +%F)" || echo "nothing to commit"
+          git pull --rebase -q || true
+          git push || true
+
+      - name: Flag a broken connection (GitHub emails you when this fails)
+        if: ${{ steps.ig.outcome == 'failure' || steps.fb.outcome == 'failure' || steps.tt.outcome == 'failure' }}
+        run: |
+          echo "::error::A social post failed: Instagram=${{ steps.ig.outcome }} Facebook=${{ steps.fb.outcome }} TikTok=${{ steps.tt.outcome }}. Check that step's log, usually an expired token. Nothing is lost: missed posts go out on the next run after it is fixed."
+          exit 1
