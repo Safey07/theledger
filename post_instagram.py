@@ -16,6 +16,8 @@ from datetime import date, datetime, timezone
 
 import yaml
 
+import social_state as st
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 HOST = "https://graph.instagram.com"
 
@@ -106,6 +108,7 @@ def post_evergreen(posts, ig_id, token, version, batch=1):
                    children=",".join(children))
         _wait_container(box["id"], token, version)
         pub = call("POST", f"{base}/media_publish", token, creation_id=box["id"])
+        st.mark("instagram", f"evergreen:{post['slug']}")
         print(f"published evergreen carousel '{post['slug']}' as {pub.get('id')}")
         time.sleep(20)
 
@@ -127,6 +130,9 @@ def main():
         print("No manifest for today. Skipping.")
         return
     manifest = json.load(open(manifest_path))
+    if st.posted_today("instagram"):
+        print("Already posted today. Skipping.")
+        return
     if manifest.get("demo"):
         # No real prices yet, so post evergreen carousels instead. Never demo prices.
         try:
@@ -172,6 +178,7 @@ def main():
         else:
             raise SystemExit("Instagram took too long to process the video.")
         pub = call("POST", f"{base}/media_publish", token, creation_id=cid)
+        st.mark("instagram", f"reel:{day}:{reel.get('file')}")
         print(f"published Reel {pub.get('id')}: {reel['brand']} {reel['name']}")
 
 
