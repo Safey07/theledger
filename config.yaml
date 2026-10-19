@@ -61,3 +61,11 @@ instagram:
   autopost: true
   posts_per_day: 1          # the day's biggest drop
   api_version: "v25.0"
+
+# Same posts go to the Facebook Page and TikTok. Each skips itself until its secrets exist.
+facebook:
+  autopost: true
+  api_version: "v25.0"
+
+tiktok:
+  autopost: true            # posts stay private until TikTok audits the app, then go public automatically
