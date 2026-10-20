@@ -80,6 +80,7 @@ def parse_awin(text):
             "price": price,
             "rrp": _num(row.get("rrp_price")),
             "in_stock": 0 if str(row.get("in_stock", "1")).strip() in ("0", "false", "no") else 1,
+            "currency": (row.get("currency") or "").strip().upper(),
         }
 
 
@@ -89,6 +90,14 @@ def _words(words):
 
 def keep(product, filters):
     """Whole-word matching, so 'car' never removes 'Carolina Herrera'."""
+    allow = {m.lower() for m in filters.get("merchants_allow", [])}
+    if allow and product["merchant"].lower() not in allow:
+        return False          # only retailers we've joined, so every link earns
+    cur = filters.get("currency")
+    if cur and product.get("currency") and product["currency"] != cur:
+        return False          # never show euro prices as pounds
+    if product["price"] < filters.get("min_price", 0):
+        return False
     hay = f"{product['name']} {product['category']}".lower()
     ex, inc = _words(filters.get("exclude_keywords", [])), _words(filters.get("include_keywords", []))
     if ex and ex.search(hay):
