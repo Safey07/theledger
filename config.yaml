@@ -37,12 +37,22 @@ feeds:
 # Keep anything someone would buy as a fragrance: bottles, minis, gift sets, discovery sets, mists.
 # Whole-word matching. Excludes skincare, bath and home scent.
 filters:
+  # Only retailers we've applied to on Awin. A retailer shows up the day it approves us.
+  # Add new names here exactly as Awin spells them.
+  merchants_allow: ["Fragrancedirect", "The Fragrance Counter", "Escentual", "allbeauty.com UK", "Perfume Click",
+                    "Fragrance Click UK", "Parfumdreams UK", "Perfume Shopping", "Perfume Market UK", "Debenhams UK",
+                    "Superdrug UK", "Space NK - UK", "Cult Beauty Global", "Express Chemist", "Beauti Outlet",
+                    "Paco Perfumerias"]
+  currency: "GBP"           # skip products priced in other currencies
+  min_price: 10             # skip body sprays and other cheap non-fragrance items
   include_keywords: ["fragrance", "fragrances", "perfume", "perfumes", "parfum", "eau de parfum", "eau de toilette",
                      "eau de cologne", "cologne", "edp", "edt", "edc", "extrait", "elixir", "aftershave",
-                     "after shave", "eau fraiche", "body mist", "hair mist", "perfume oil", "attar",
+                     "after shave", "eau fraiche", "body mist", "perfume oil", "attar",
                      "discovery set", "gift set", "miniature", "travel spray"]
   exclude_keywords: ["sample", "vial", "body lotion", "body cream", "shower gel", "shower cream", "bath",
-                     "deodorant", "deo", "antiperspirant", "soap", "candle", "diffuser", "reed diffuser",
+                     "deodorant", "deo", "deospray", "deo spray", "antiperspirant", "anti-perspirant",
+                     "roll-on", "body spray", "hair mist", "hairmist", "hair perfume", "jojoba", "massage oil",
+                     "carrier oil", "essential oil", "soap", "candle", "diffuser", "reed diffuser",
                      "room spray", "wax melt", "home fragrance", "car freshener", "laundry", "fabric",
                      "shampoo", "conditioner", "serum", "cleanser", "face", "moisturiser", "balm", "aftershave balm", "lip", "nail"]
 
