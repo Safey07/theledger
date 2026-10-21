@@ -180,15 +180,8 @@ def build_site(db, cfg, day, drops, out_dir, demo=False):
     for p in products:
         p["chart"] = price_chart(p["pts"], sym)
         p["brand_slug"] = slugify(p["brand"])
-        p["jsonld"] = json.dumps({
-            "@context": "https://schema.org", "@type": "Product",
-            "name": f"{p['brand']} {p['name']}", "brand": {"@type": "Brand", "name": p["brand"]},
-            "image": p["image"] or None,
-            "offers": {"@type": "Offer", "price": f"{p['price']:.2f}", "priceCurrency": "GBP",
-                       "availability": "https://schema.org/InStock", "url": p["url"],
-                       "seller": {"@type": "Organization", "name": p["merchant"]}},
-        }).replace("</", "<\\/")
         compare = sorted(by_name[match_key(p["brand"], p["name"])], key=lambda o: o["price"])
+        p["jsonld"] = _product_jsonld(p, compare)
         more = [c for c in catalogue if c["b"] == p["brand"] and c["n"] != p["name"]][:4]
         _write(os.path.join(out_dir, "p", f"{p['slug']}.html"),
                env.get_template("product.html").render(**common, root="../", p=p, compare=compare,
@@ -302,3 +295,25 @@ def build_social(cfg, day, drops, out_dir):
             f"#fragrance #perfume #{slugify(d['brand']).replace('-', '')} #fragrancedeals #ukdeals #ad\n")
     _write(os.path.join(out_dir, "captions.txt"), "\n".join(captions))
     return len(captions)
+
+
+def _product_jsonld(p, compare):
+    """Price-comparison markup. We list other shops' prices, so this is an AggregateOffer
+    (Google product snippet), not a merchant listing that needs shipping and returns data.
+    Empty fields are left out rather than sent as null."""
+    title = f"{p['brand']} {p['name']}".strip()
+    low, high = compare[0]["price"], compare[-1]["price"]
+    shops = len({c["merchant"] for c in compare})
+    data = {
+        "@context": "https://schema.org", "@type": "Product", "name": title,
+        "description": (f"Compare UK prices for {title}. Lowest today £{low:.2f} at {compare[0]['merchant']}"
+                        f"{f', across {shops} retailers' if shops > 1 else ''}."),
+        "offers": {"@type": "AggregateOffer", "priceCurrency": "GBP",
+                   "lowPrice": f"{low:.2f}", "highPrice": f"{high:.2f}", "offerCount": len(compare)},
+    }
+    if p.get("brand"):
+        data["brand"] = {"@type": "Brand", "name": p["brand"]}
+    image = p.get("image") or next((c.get("image") for c in compare if c.get("image")), None)
+    if image:
+        data["image"] = image
+    return json.dumps(data).replace("</", "<\\/")
