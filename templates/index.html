@@ -3,8 +3,12 @@
 <section class="hero">
   <p class="meta">{{ today_label }}</p>
   <h1>Today's fragrance price drops</h1>
+  {% if counts.all %}
   <p class="lede">We track {{ counts.all }} fragrances from {{ counts.brands }} brands across {{ counts.retailers }} UK retailers every morning. These are the ones selling well below their own usual price.</p>
   <div class="stats"><div><b>{{ drops|length }}</b><span>drops today</span></div><div><b>{{ counts.all }}</b><span>fragrances tracked</span></div><div><b>{{ counts.brands }}</b><span>brands</span></div></div>
+  {% else %}
+  <p class="lede">We're adding UK retailers this week. Designer and niche fragrance prices go live here as each one joins, checked every morning.</p>
+  {% endif %}
 </section>
 
 <nav class="tiles" aria-label="Shop by">
@@ -20,7 +24,7 @@
 </div>
 <div class="grid" id="drops">{% for d in drops %}{% include "_card.html" %}{% endfor %}</div>
 <p class="empty" id="dropsnone" hidden>No drops in this filter today. <a href="{{ root }}shop.html">Browse every fragrance</a>.</p>
-{% else %}
+{% elif counts.all %}
 <p class="empty">No significant drops today. <a href="{{ root }}shop.html">Browse every fragrance at today's lowest price</a>.</p>
 {% endif %}
 
@@ -44,10 +48,12 @@
 <div class="grid">{% for d in recent %}{% include "_card.html" %}{% endfor %}</div>
 {% endif %}
 
+{% if top %}
 <h2>Best value right now</h2>
 <p class="lede">The fragrances furthest below their usual price today, at their cheapest retailer.</p>
 <div class="grid">{% for c in top %}{% include "_ccard.html" %}{% endfor %}</div>
 <p style="margin:-20px 0 50px"><a class="btn ghost" href="{{ root }}shop.html">Browse all {{ counts.all }} fragrances</a></p>
+{% endif %}
 
 <script>
 (function(){
