@@ -55,7 +55,7 @@ filters:
                      "eau de cologne", "cologne", "edp", "edt", "edc", "extrait", "elixir", "aftershave",
                      "after shave", "eau fraiche", "body mist", "perfume oil", "attar",
                      "discovery set", "gift set", "miniature", "travel spray"]
-  exclude_keywords: ["sample", "vial", "body lotion", "body cream", "shower gel", "shower cream", "bath",
+  exclude_keywords: ["sample", "vial", "tester", "testers", "unboxed", "decant", "decants", "body lotion", "body cream", "shower gel", "shower cream", "bath",
                      "deodorant", "deo", "deospray", "deo spray", "antiperspirant", "anti-perspirant",
                      "roll-on", "body spray", "hair mist", "hairmist", "hair perfume", "jojoba", "massage oil",
                      "carrier oil", "essential oil", "soap", "candle", "diffuser", "reed diffuser",
