@@ -86,7 +86,7 @@ video:
 # Instagram auto-posting. Stays off until IG_USER_ID and IG_ACCESS_TOKEN secrets exist.
 # Never posts demo prices.
 instagram:
-  autopost: true
+  autopost: false           # Meta developer account locked; Instagram is scheduled in Meta Business Suite instead
   posts_per_day: 1          # the day's biggest drop
   api_version: "v25.0"
 
