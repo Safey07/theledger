@@ -57,11 +57,12 @@ def main():
             os.remove(db_path)
         db = data.connect(db_path)
         feeds = build_demo(os.path.join(HERE, "sample_data"))
+        demo_filters = {**cfg["filters"], "merchants_allow": []}   # demo retailers are fictional
         for day, path in feeds[:-1]:   # backfill history, publishing as we go
-            data.ingest(db, [path], cfg["filters"], day)
+            data.ingest(db, [path], demo_filters, day)
             data.mark_published(db, data.detect_drops(db, day, cfg["detection"]), day)
         day, last = feeds[-1]
-        count = data.ingest(db, [last], cfg["filters"], day)
+        count = data.ingest(db, [last], demo_filters, day)
     else:
         db = data.connect(os.path.join(HERE, "data", "prices.db"))
         day = date.today().isoformat()
