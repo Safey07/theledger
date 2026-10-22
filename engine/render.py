@@ -2,7 +2,8 @@
 import json
 import os
 import shutil
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
+from zoneinfo import ZoneInfo
 from html import escape
 
 from jinja2 import Environment, FileSystemLoader
@@ -118,7 +119,8 @@ def build_site(db, cfg, day, drops, out_dir, demo=False, prices_from=None):
     common = {"site": site, "updated": day, "demo": demo,
               "signup_action": action if action and action != "#" else None,
               "collections": COLLECTIONS, "guides": load_guides(),
-              "stale": date.fromisoformat(prices_from).strftime("%-d %B %Y") if prices_from else None}
+              "stale": date.fromisoformat(prices_from).strftime("%-d %B %Y") if prices_from else None,
+              "checked": datetime.now(ZoneInfo("Europe/London")).strftime("%-d %B %Y, %H:%M")}
     updated, day = day, prices_from or day   # from here on, day is the day whose prices we show
     for d in drops:
         tag(d, niche_brands)

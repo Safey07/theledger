@@ -15,7 +15,7 @@
     <div class="pricebox">
       <div class="verdict v-{{ p.verdict.k }}"><b>{{ p.verdict.label }}</b><span>{{ p.verdict.why }}</span></div>
       <div class="row"><span class="now">{{ site.currency_symbol }}{{ "%.2f"|format(p.price) }}</span>{% if p.usual and p.usual > p.price %}<span class="was">{{ site.currency_symbol }}{{ "%.2f"|format(p.usual) }} usual</span>{% endif %}</div>
-      <p class="sub">at {{ p.merchant }}{% if p.ml %} &nbsp;·&nbsp; {{ site.currency_symbol }}{{ "%.2f"|format(p.price / p.ml * 10) }} per 10ml{% endif %}{% if p.low_30 is not none %} &nbsp;·&nbsp; 30-day low {{ site.currency_symbol }}{{ "%.2f"|format(p.low_30) }}{% endif %}</p>
+      <p class="sub">at {{ p.merchant }}{% if p.ml %} &nbsp;·&nbsp; {{ site.currency_symbol }}{{ "%.2f"|format(p.price / p.ml * 10) }} per 10ml{% endif %}{% if p.low_30 is not none %} &nbsp;·&nbsp; 30-day low {{ site.currency_symbol }}{{ "%.2f"|format(p.low_30) }}{% endif %}{% if not stale %}<br>Price checked {{ checked }} UK time{% endif %}</p>
       {% if stale %}<p class="note">Price recorded on {{ stale }}. Our feeds didn't update today, so check {{ p.merchant }} for the current price.</p>{% endif %}
       {% if cheapest.id != p.id %}<p class="note">Cheaper{% if not stale %} today{% endif %}: <a href="{{ root }}p/{{ cheapest.slug }}.html">{{ site.currency_symbol }}{{ "%.2f"|format(cheapest.price) }} at {{ cheapest.merchant }}</a></p>{% endif %}
       <a class="btn" href="{{ p.url }}" rel="sponsored nofollow noopener" target="_blank">Buy at {{ p.merchant }}</a>
