@@ -9,6 +9,8 @@ site:
   market: "UK"
   contact_email: "hello@theledgeruk.co.uk"   # forwards to the owner's inbox via Namecheap
   instagram: "theledgeruk.co"
+  tiktok: "theledgeruk.co"
+  facebook: "theledgeruk.co"
 
 # Rules for what counts as a drop worth publishing
 detection:

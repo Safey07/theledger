@@ -10,7 +10,7 @@ from jinja2 import Environment, FileSystemLoader
 import statistics
 
 from .classify import base_key, match_key, tag, verdict
-from .content import build_content
+from .content import build_content, load_guides
 from .data import allowed_merchants, history, slugify
 
 
@@ -117,7 +117,7 @@ def build_site(db, cfg, day, drops, out_dir, demo=False, prices_from=None):
     action = cfg.get("signup_action", "#")
     common = {"site": site, "updated": day, "demo": demo,
               "signup_action": action if action and action != "#" else None,
-              "collections": COLLECTIONS,
+              "collections": COLLECTIONS, "guides": load_guides(),
               "stale": date.fromisoformat(prices_from).strftime("%-d %B %Y") if prices_from else None}
     updated, day = day, prices_from or day   # from here on, day is the day whose prices we show
     for d in drops:
@@ -173,12 +173,17 @@ def build_site(db, cfg, day, drops, out_dir, demo=False, prices_from=None):
         counts=counts, drop_brands=drop_brands, top=catalogue[:8]))
 
     # Browse pages: shop all plus collections. First 24 rendered for search engines, the rest load from JSON.
+    # Empty ones still exist (nav links to them) but stay out of search engines until they have prices.
     brand_list = sorted({c["b"] for c in catalogue})
+    listed = []
     for slug, heading, intro, preset in COLLECTIONS:
         first = [c for c in catalogue if _match(c, preset)]
+        if first:
+            listed.append(f"{slug}.html")
         _write(os.path.join(out_dir, f"{slug}.html"), env.get_template("browse.html").render(
             **common, root="", heading=heading, intro=intro, canon=f"{slug}.html", slug=slug,
-            preset=json.dumps(preset), first=first[:24], total=len(first), brand_list=brand_list))
+            preset=json.dumps(preset), first=first[:24], total=len(first), brand_list=brand_list,
+            noindex=not first))
 
     # One SEO page per product listing
     for p in products:
@@ -205,14 +210,17 @@ def build_site(db, cfg, day, drops, out_dir, demo=False, prices_from=None):
              for b, v in sorted(brands.items())]
     _write(os.path.join(out_dir, "brands.html"), env.get_template("listing.html").render(
         **common, root="", heading="All brands", canon="brands.html",
-        intro="Every fragrance brand we track, with today's prices.", items=[], links=links))
+        intro="Every fragrance brand we track, with today's prices.", items=[], links=links,
+        noindex=not links))
+    if links:
+        listed.append("brands.html")
 
     # Trust pages and guides
     content_urls = build_content(env, common, cfg, out_dir, _write)
 
     # Sitemap and robots for search engines
     base = site["base_url"].rstrip("/")
-    urls = ["index.html", "brands.html"] + [f"{c[0]}.html" for c in COLLECTIONS] + content_urls + \
+    urls = [""] + listed + content_urls + \
            [f"b/{slugify(b)}.html" for b in brands] + \
            [f"p/{p['slug']}.html" for p in products]
     sitemap = "".join(f"<url><loc>{escape(base)}/{u}</loc><lastmod>{updated}</lastmod></url>" for u in urls)

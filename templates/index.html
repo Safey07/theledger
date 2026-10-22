@@ -2,20 +2,22 @@
 {% block body %}
 <section class="hero">
   <p class="meta">{{ today_label }}</p>
-  <h1>{% if stale %}Fragrance prices from {{ stale }}{% else %}Today's fragrance price drops{% endif %}</h1>
+  <h1>{% if stale %}Fragrance prices from {{ stale }}{% elif counts.all %}Today's fragrance price drops{% else %}Honest UK fragrance prices, checked every morning{% endif %}</h1>
   {% if counts.all and stale %}
   <p class="lede">Our retailer feeds didn't update this morning, so these are the {{ counts.all }} prices we recorded on {{ stale }}. Prices may have changed since. We'll publish drops again as soon as fresh prices arrive.</p>
   {% elif counts.all %}
   <p class="lede">We track {{ counts.all }} fragrances from {{ counts.brands }} brands across {{ counts.retailers }} UK retailers every morning. These are the ones selling well below their own usual price.</p>
   <div class="stats"><div><b>{{ drops|length }}</b><span>drops today</span></div><div><b>{{ counts.all }}</b><span>fragrances tracked</span></div><div><b>{{ counts.brands }}</b><span>brands</span></div></div>
   {% else %}
-  <p class="lede">We're adding UK retailers this week. Designer and niche fragrance prices go live here as each one joins, checked every morning.</p>
+  <p class="lede">The Ledger tracks UK prices for designer and niche fragrance and tells you when a bottle is genuinely cheaper than usual. No inflated "was" prices, no invented RRPs. We're adding UK retailers now, and prices go live here as each one joins.</p>
   {% endif %}
 </section>
 
+{% if counts.all %}
 <nav class="tiles" aria-label="Shop by">
   {% for slug, heading, intro, preset in collections %}<a href="{{ root }}{{ slug }}.html">{{ {"shop":"Shop all","men":"For him","women":"For her","unisex":"Unisex","niche":"Niche","under-50":"Under £50","under-100":"Under £100"}[slug] }}</a>{% endfor %}
 </nav>
+{% endif %}
 
 {% if drops %}
 <div class="toolbar" id="dropbar">
@@ -38,11 +40,6 @@
     <button type="submit">Subscribe</button>
   </form>
 </section>
-{% elif site.instagram %}
-<section class="signup">
-  <div><h2>Get the drops every day</h2><p class="lede" style="margin:4px 0 0">The biggest drop each morning, as a short Reel.</p></div>
-  <a class="btn" href="https://www.instagram.com/{{ site.instagram }}/" target="_blank" rel="noopener">Follow @{{ site.instagram }}</a>
-</section>
 {% endif %}
 
 {% if recent %}
@@ -55,6 +52,28 @@
 <p class="lede">The fragrances furthest below their usual price{% if not stale %} today{% endif %}, at their cheapest retailer.</p>
 <div class="grid">{% for c in top %}{% include "_ccard.html" %}{% endfor %}</div>
 <p style="margin:-20px 0 50px"><a class="btn ghost" href="{{ root }}shop.html">Browse all {{ counts.all }} fragrances</a></p>
+{% endif %}
+
+<section aria-labelledby="how">
+<h2 id="how">How The Ledger works</h2>
+<ol class="steps">
+  <li><b>We read retailer prices every morning</b>Official product feeds from UK retailers, read once a day.</li>
+  <li><b>We keep every price</b>Each bottle builds its own price history, so you can see what it really sells for.</li>
+  <li><b>We only call it a drop if it's real</b>At least 10% and £5 below that bottle's own 30-day median. Not below an RRP nobody pays.</li>
+</ol>
+<p><a class="btn ghost" href="{{ root }}how-we-track-prices.html">Read exactly how we track prices</a></p>
+</section>
+
+{% if guides %}
+<h2>Fragrance buying guides</h2>
+<div class="guides two">{% for g in guides %}<a class="guide" href="{{ root }}guides/{{ g.slug }}.html"><h3>{{ g.title }}</h3><p>{{ g.description }}</p></a>{% endfor %}</div>
+{% endif %}
+
+{% if site.instagram or site.tiktok or site.facebook %}
+<section class="signup">
+  <div><h2>{% if counts.all %}Get the drops every day{% else %}Follow for the first drops{% endif %}</h2><p class="lede" style="margin:4px 0 0">{% if counts.all %}The biggest drop each morning, as a short video.{% else %}Buying tips now, and the day's biggest drop once prices go live.{% endif %} @{{ site.instagram or site.tiktok }}</p></div>
+  {% include "_follow.html" %}
+</section>
 {% endif %}
 
 <script>

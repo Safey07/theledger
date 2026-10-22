@@ -21,6 +21,10 @@ def _load(path):
     }
 
 
+def load_guides():
+    return [_load(p) for p in sorted(glob.glob(os.path.join(HERE, "content", "guides", "*.md")))]
+
+
 def build_content(env, common, cfg, out_dir, write):
     """Write content pages and guides. Returns the list of URLs created, for the sitemap."""
     site = cfg["site"]
@@ -38,10 +42,8 @@ def build_content(env, common, cfg, out_dir, write):
                          jsonld=None))
         urls.append(f"{page['slug']}.html")
 
-    guides = []
-    for path in sorted(glob.glob(os.path.join(HERE, "content", "guides", "*.md"))):
-        g = _load(path)
-        guides.append(g)
+    guides = load_guides()
+    for g in guides:
         jsonld = json.dumps({
             "@context": "https://schema.org", "@type": "Article",
             "headline": g["title"], "description": g["description"],

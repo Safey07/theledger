@@ -4,7 +4,12 @@
 {% block canon %}{{ canon }}{% endblock %}
 {% block body %}
 <h1>{{ heading }}</h1>
-<p class="lede">{{ intro }}</p>
+{% if brand_list %}<p class="lede">{{ intro }}</p>{% endif %}
+{% if not brand_list %}
+{% include "_empty.html" %}
+{% elif not total %}
+<p class="empty">Nothing in this collection today. <a href="{{ root }}shop.html">Browse every fragrance</a>.</p>
+{% else %}
 <div class="toolbar browse" id="bar">
   <input class="search" type="search" id="q" placeholder="Search brand or fragrance" aria-label="Search">
   <div class="chips" role="group" aria-label="Who for">
@@ -77,4 +82,5 @@
   fetch('catalog.json').then(function(r){return r.json()}).then(function(d){all=d;filter();}).catch(function(){});
 })();
 </script>
+{% endif %}
 {% endblock %}

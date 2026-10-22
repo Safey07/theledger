@@ -1,0 +1,7 @@
+<section class="emptystate">
+  <p>Prices aren't live yet. We're adding UK retailers now, and fragrances appear here, checked every morning, as each one joins. <a href="{{ root }}how-we-track-prices.html">See how we track prices</a>.</p>
+  {% if guides %}<h2>Read a buying guide while you wait</h2>
+  <div class="guides">{% for g in guides %}<a class="guide" href="{{ root }}guides/{{ g.slug }}.html"><h3>{{ g.title }}</h3><p>{{ g.description }}</p></a>{% endfor %}</div>{% endif %}
+  <h2>Follow for the first drops</h2>
+  {% include "_follow.html" %}
+</section>
