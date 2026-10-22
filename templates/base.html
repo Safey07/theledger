@@ -161,14 +161,14 @@ footer .links a{margin-right:16px;color:var(--muted)}
 {% if demo %}<div class="demo">Demo build with invented prices and fictional retailers.</div>{% endif %}
 <header class="top"><div class="wrap">
 <a class="logo" href="{{ root }}index.html">The <span>Ledger</span></a>
-<form class="hsearch" action="{{ root }}shop.html" method="get" role="search"><input type="search" name="q" placeholder="Search 100+ fragrances" aria-label="Search fragrances"></form>
+<form class="hsearch" action="{{ root }}shop.html" method="get" role="search"><input type="search" name="q" placeholder="Search fragrances" aria-label="Search fragrances"></form>
 <nav class="main"><a href="{{ root }}index.html">Today's drops</a><a href="{{ root }}shop.html">Shop all</a><a href="{{ root }}men.html">For him</a><a href="{{ root }}women.html">For her</a><a href="{{ root }}niche.html">Niche</a><a href="{{ root }}brands.html">Brands</a><a href="{{ root }}guides.html">Guides</a></nav>
 </div></header>
 <main class="wrap">{% block body %}{% endblock %}</main>
 <footer><div class="wrap">
-Prices update daily and can change at any time. {{ site.name }} earns a commission when you buy through links on this site, at no extra cost to you.
+Prices update daily and can change at any time. {{ site.name }} earns a commission when you buy through links on this site, at no extra cost to you. <a href="{{ root }}affiliate-disclosure.html">How this works</a>.
 Last updated {{ updated }}.
-<p class="links"><a href="{{ root }}about.html">About</a><a href="{{ root }}how-we-track-prices.html">How we track prices</a><a href="{{ root }}guides.html">Guides</a><a href="{{ root }}contact.html">Contact</a>{% if site.instagram %}<a href="https://www.instagram.com/{{ site.instagram }}/" rel="noopener" target="_blank">Instagram @{{ site.instagram }}</a>{% endif %}</p>
+<p class="links"><a href="{{ root }}about.html">About</a><a href="{{ root }}how-we-track-prices.html">How we track prices</a><a href="{{ root }}guides.html">Guides</a><a href="{{ root }}contact.html">Contact</a><a href="{{ root }}affiliate-disclosure.html">Affiliate disclosure</a><a href="{{ root }}privacy.html">Privacy</a>{% if site.instagram %}<a href="https://www.instagram.com/{{ site.instagram }}/" rel="noopener" target="_blank">Instagram @{{ site.instagram }}</a>{% endif %}</p>
 </div></footer>
 </body>
 </html>
