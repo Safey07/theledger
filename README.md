@@ -26,10 +26,10 @@ Open `output/site/index.html`. Demo data is invented.
 | 1 | Create a free GitHub account and a new **public** repo called `theledger`. Upload this folder. | github.com |
 | 2 | Settings → Pages → Source: **GitHub Actions**. | repo settings |
 | 3 | Edit `config.yaml`. Set `base_url` to `https://YOURNAME.github.io/theledger`. | this repo |
-| 4 | Apply to Awin as a publisher. Use the live site URL from step 2. | awin.com |
-| 5 | Inside Awin, join fragrance advertisers (search "fragrance", "perfume", "beauty"). Aim for 10+ approvals. | Awin dashboard |
-| 6 | Awin → Toolbox → Create-a-Feed. Select approved advertisers, CSV, gzip. Copy the feed URL. | Awin dashboard |
-| 7 | Repo → Settings → Secrets → Actions. Add `AWIN_FEED_URL`. | repo settings |
+| 4 | Apply to an affiliate network as a publisher (Rakuten Advertising, Skimlinks, FlexOffers...). Use the live site URL from step 2. | network site |
+| 5 | Join fragrance advertisers on that network. | network dashboard |
+| 6 | Get each advertiser's product feed URL (CSV, TSV or XML; gzip is fine). | network dashboard |
+| 7 | Add the feed to `feeds:` in `config.yaml` (format `rakuten`, `awin` or `generic_csv`), and the URL as a repo secret named in its `url:`. | config + repo settings |
 | 8 | Create a free Buttondown account. Add secret `BUTTONDOWN_API_KEY`. Copy its embed form action URL into secret `SIGNUP_FORM_ACTION`. Set `email.provider: "buttondown"` in config. | buttondown.com |
 | 9 | Actions tab → Daily run → Run workflow. Check the site. | repo |
 | 10 | Submit `sitemap.xml` to Google Search Console. | search.google.com/search-console |
@@ -46,7 +46,7 @@ Notes
 
 ## Your weekly 15 minutes
 - Download the `social-cards` artifact from the latest Actions run. Schedule the week's cards in Buffer or Later.
-- Glance at Awin for advertisers who left or new ones to join.
+- Glance at the affiliate network for advertisers who left or new ones to join.
 
 ## Scale plan
 
@@ -58,12 +58,27 @@ Notes
 | 4 | UK proven | Gulf edition. Gulf retailers run affiliate programs through regional networks. Copy config, set currency to AED/SAR, add Arabic templates. |
 | 5 | Traffic compounding | Sell a sponsored slot in the email to fragrance brands. Paid newsletter tier with early access to drops. |
 
+## Tests
+
+```
+pip install -r requirements-dev.txt
+python -m pytest -q tests
+```
+
+Offline and under a second. Fixture feeds for each format live in `tests/fixtures/`.
+
+## If the feeds stop
+
+If no feed returns prices, the site keeps the last good day's prices from current retailers
+(up to `detection.max_stale_days`), labelled "prices from <date>". With nothing recent it shows
+an empty state that points to the guides and socials. It never falls back to demo data.
+
 ## How it works
 
 ```
 config.yaml          all settings
 run.py               the daily job
-engine/data.py       feed parsing, price history (SQLite), drop detection
+engine/data.py       feed parsers (awin, rakuten, generic_csv), price history (SQLite), drop detection
 engine/render.py     website, email, social cards
 engine/demo.py       invented sample feeds for testing
 templates/           site HTML
