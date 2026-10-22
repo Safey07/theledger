@@ -29,29 +29,30 @@ jobs:
     environment:
       name: github-pages
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
 
-      - run: pip install -r requirements.txt
+      - run: pip install -r requirements.txt -r requirements-dev.txt
+
+      - name: Tests (offline, under a second)
+        run: python -m pytest -q tests
 
       - name: Install headless browser and video tools
         run: |
           python -m playwright install --with-deps chromium
           sudo apt-get install -y ffmpeg >/dev/null 2>&1 || true
 
-      - uses: actions/cache@v4
+      - uses: actions/cache@v5
         with:
           path: .cache/fonts
           key: fonts-v1
 
       - name: Pull feeds, detect drops, build site, email, social cards
         env:
-          AWIN_FEED_URL: ${{ secrets.AWIN_FEED_URL }}
-          AWIN_FEED_URL_2: ${{ secrets.AWIN_FEED_URL_2 }}
-          AWIN_FEED_URL_3: ${{ secrets.AWIN_FEED_URL_3 }}
+          RAKUTEN_FEED_URL: ${{ secrets.RAKUTEN_FEED_URL }}
           BUTTONDOWN_API_KEY: ${{ secrets.BUTTONDOWN_API_KEY }}
           SIGNUP_FORM_ACTION: ${{ secrets.SIGNUP_FORM_ACTION }}
         run: python run.py
@@ -65,17 +66,17 @@ jobs:
           git push
 
       - name: Keep social cards for download
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: social-cards-and-reels
           path: output/social
           retention-days: 14
 
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: output/site
 
-      - uses: actions/deploy-pages@v4
+      - uses: actions/deploy-pages@v5
 
       - name: Post today's top drop to Instagram
         id: ig
