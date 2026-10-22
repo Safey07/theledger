@@ -112,7 +112,7 @@ def main():
     print(f"TikTok connected as @{info.get('creator_username')}. Posting as {privacy}"
           + ("" if privacy.startswith("PUBLIC") else " (app not audited yet, so posts stay private)."))
 
-    batch = int(os.environ.get("EVERGREEN_BATCH", "1") or 1) if manifest.get("demo") else 1
+    batch = int(os.environ.get("EVERGREEN_BATCH", "1") or 1) if manifest.get("no_drops", manifest.get("demo")) else 1
     todo = [i for i in st.todays_items(manifest) if not st.done("tiktok", i["key"])][:batch]
     if not todo:
         print("Nothing new to post on TikTok today.")

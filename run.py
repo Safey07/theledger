@@ -97,7 +97,9 @@ def main():
     except Exception as err:  # never block the site on an image problem
         print(f"evergreen posts: skipped ({err})")
     with open(os.path.join(social_dir, "manifest.json"), "w") as fh:
-        json.dump({"day": day, "demo": args.demo, "reels": reels, "evergreen": evergreen}, fh, indent=2)
+        # no_drops: nothing real to post today (demo, dead feeds or a quiet day), so post evergreen instead
+        json.dump({"day": day, "demo": args.demo, "no_drops": args.demo or not reels, "reels": reels,
+                   "evergreen": evergreen}, fh, indent=2)
     data.mark_published(db, drops, day)
 
     print(f"{day}: {count} prices stored, {len(drops)} drops, {pages} pages, {cards} social cards, {len(reels)} reels")

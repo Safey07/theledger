@@ -133,11 +133,11 @@ def main():
     if st.posted_today("instagram"):
         print("Already posted today. Skipping.")
         return
-    if manifest.get("demo"):
-        # No real prices yet, so post evergreen carousels instead. Never demo prices.
+    if manifest.get("no_drops", manifest.get("demo")):
+        # No real drop to post today, so post evergreen carousels instead. Never demo prices.
         try:
             me = call("GET", f"/{version}/me", token, fields="user_id,username")
-            print(f"Instagram connected as @{me.get('username')}. Demo prices today.")
+            print(f"Instagram connected as @{me.get('username')}. No drops to post today.")
         except RuntimeError as err:
             sys.exit(f"Instagram connection check failed: {err}")
         token = refresh_token(token)

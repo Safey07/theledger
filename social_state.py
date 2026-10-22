@@ -57,8 +57,8 @@ def save_secret(name, value):
 
 
 def todays_items(manifest, limit_reels=1):
-    """What to post today: real drops as videos, or the next evergreen carousel on demo days."""
-    if manifest.get("demo"):
+    """What to post today: real drops as videos, or the next evergreen carousel when there are none."""
+    if manifest.get("no_drops", manifest.get("demo")):
         return [{"kind": "carousel", "key": f"evergreen:{p['slug']}", "caption": p["caption"],
                  "urls": p["urls"]} for p in manifest.get("evergreen", [])]
     return [{"kind": "video", "key": f"reel:{manifest['day']}:{r['file']}", "caption": r["caption"],
