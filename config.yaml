@@ -17,6 +17,7 @@ detection:
   history_days: 30
   max_digest_items: 12      # items in the daily email
   max_social_cards: 3       # image cards generated per day
+  max_stale_days: 14        # if feeds die, keep showing the last good day's prices (labelled) this long
 
 # Product feeds. Switching network = edit this list and add the secret. No code changes.
 # url uses ${ENV_VAR} so keys never live in the repo. Unset URLs are skipped.

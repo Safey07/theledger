@@ -7,7 +7,7 @@ import argparse
 import json
 import os
 import urllib.request
-from datetime import date
+from datetime import date, timedelta
 
 import yaml
 
@@ -47,9 +47,9 @@ def main():
     cfg["signup_action"] = os.environ.get("SIGNUP_FORM_ACTION", "#")
     out = os.path.join(HERE, "output")
 
-    if not args.demo and not any(data._expand_env(f["url"]) for f in cfg["feeds"]):
-        print("No feed URL set yet, building the demo site instead.")
-        args.demo = True
+    if not args.demo and not any(data._expand_env(f.get("url") or "") for f in cfg["feeds"]):
+        # Never fall back to demo prices on the live site: build from stored history instead.
+        print("::warning::No feed URL is set. Add the network's feed secret (see config.yaml feeds).")
 
     if args.demo:
         db_path = os.path.join(HERE, "data", "demo.db")
@@ -67,9 +67,20 @@ def main():
         db = data.connect(os.path.join(HERE, "data", "prices.db"))
         day = date.today().isoformat()
         count = data.ingest(db, cfg["feeds"], cfg["filters"], day, cfg.get("merchant_names"))
+    prices_from = None
+    if not count and not args.demo:
+        # Dead or unset feeds: keep the last good catalogue up, clearly dated, rather than blank the site.
+        last = data.last_good_day(db, day, data.allowed_merchants(cfg))
+        oldest = (date.fromisoformat(day) - timedelta(days=cfg["detection"].get("max_stale_days", 14))).isoformat()
+        if last and last >= oldest:
+            prices_from = last
+            print(f"::warning::No prices from any feed today. Showing prices from {last}, labelled as such.")
+        else:
+            print("::warning::No prices from any feed today and none recent from current retailers. Site shows its empty state.")
 
     drops = data.detect_drops(db, day, cfg["detection"])
-    pages = render.build_site(db, cfg, day, drops, os.path.join(out, "site"), demo=args.demo)
+    pages = render.build_site(db, cfg, day, drops, os.path.join(out, "site"), demo=args.demo,
+                             prices_from=prices_from)
     subject, html = render.build_digest(cfg, day, drops, os.path.join(out, "email", f"{day}.html"))
     social_dir = os.path.join(out, "social", day)
     cards = render.build_social(cfg, day, drops, social_dir)

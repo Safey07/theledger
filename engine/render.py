@@ -11,7 +11,7 @@ import statistics
 
 from .classify import base_key, match_key, tag, verdict
 from .content import build_content
-from .data import history, slugify
+from .data import allowed_merchants, history, slugify
 
 
 def _match(c, preset):
@@ -61,10 +61,11 @@ def _write(path, html):
         fh.write(html)
 
 
-def _current_products(db, day):
-    return [dict(r) for r in db.execute(
+def _current_products(db, day, allow=None):
+    rows = [dict(r) for r in db.execute(
         """SELECT p.*, pr.price FROM prices pr JOIN products p ON p.id=pr.product_id
            WHERE pr.day=? AND pr.in_stock=1""", (day,))]
+    return [r for r in rows if allow is None or r["merchant"].lower() in allow]
 
 
 COLLECTIONS = [
@@ -102,7 +103,8 @@ def _catalogue(products, sym):
     return items
 
 
-def build_site(db, cfg, day, drops, out_dir, demo=False):
+def build_site(db, cfg, day, drops, out_dir, demo=False, prices_from=None):
+    """prices_from: show that earlier day's prices (labelled) because no feed worked today."""
     env = _env()
     site = cfg["site"]
     sym = site["currency_symbol"]
@@ -115,7 +117,9 @@ def build_site(db, cfg, day, drops, out_dir, demo=False):
     action = cfg.get("signup_action", "#")
     common = {"site": site, "updated": day, "demo": demo,
               "signup_action": action if action and action != "#" else None,
-              "collections": COLLECTIONS}
+              "collections": COLLECTIONS,
+              "stale": date.fromisoformat(prices_from).strftime("%-d %B %Y") if prices_from else None}
+    updated, day = day, prices_from or day   # from here on, day is the day whose prices we show
     for d in drops:
         tag(d, niche_brands)
 
@@ -123,7 +127,7 @@ def build_site(db, cfg, day, drops, out_dir, demo=False):
     week_ago = (date.fromisoformat(day) - timedelta(days=7)).isoformat()
     drop_ids = {d["id"] for d in drops}
     recent = []
-    for r in db.execute(
+    for r in [] if prices_from else db.execute(
             """SELECT pub.product_id, MIN(pub.price) AS announced, p.*, pr.price
                FROM published pub JOIN products p ON p.id=pub.product_id
                JOIN prices pr ON pr.product_id=pub.product_id AND pr.day=?
@@ -131,7 +135,7 @@ def build_site(db, cfg, day, drops, out_dir, demo=False):
         if r["id"] not in drop_ids and r["price"] <= r["announced"]:
             recent.append(tag({**dict(r), "was": None}, niche_brands))
 
-    products = _current_products(db, day)
+    products = _current_products(db, day, allowed_merchants(cfg) if prices_from else None)
     by_name = {}
     for p in products:
         tag(p, niche_brands)
@@ -162,7 +166,7 @@ def build_site(db, cfg, day, drops, out_dir, demo=False):
     counts = {"all": len(catalogue), "brands": len({c["b"] for c in catalogue}),
               "retailers": len({p["merchant"] for p in products})}
 
-    today_label = date.fromisoformat(day).strftime("%A %-d %B %Y")
+    today_label = date.fromisoformat(updated).strftime("%A %-d %B %Y")
     drop_brands = sorted({d["brand"] for d in drops})
     _write(os.path.join(out_dir, "index.html"), env.get_template("index.html").render(
         **common, root="", drops=drops, recent=recent[:12], today_label=today_label,
@@ -181,7 +185,7 @@ def build_site(db, cfg, day, drops, out_dir, demo=False):
         p["chart"] = price_chart(p["pts"], sym)
         p["brand_slug"] = slugify(p["brand"])
         compare = sorted(by_name[match_key(p["brand"], p["name"])], key=lambda o: o["price"])
-        p["jsonld"] = _product_jsonld(p, compare)
+        p["jsonld"] = _product_jsonld(p, compare, common["stale"])
         more = [c for c in catalogue if c["b"] == p["brand"] and c["n"] != p["name"]][:4]
         _write(os.path.join(out_dir, "p", f"{p['slug']}.html"),
                env.get_template("product.html").render(**common, root="../", p=p, compare=compare,
@@ -211,7 +215,7 @@ def build_site(db, cfg, day, drops, out_dir, demo=False):
     urls = ["index.html", "brands.html"] + [f"{c[0]}.html" for c in COLLECTIONS] + content_urls + \
            [f"b/{slugify(b)}.html" for b in brands] + \
            [f"p/{p['slug']}.html" for p in products]
-    sitemap = "".join(f"<url><loc>{escape(base)}/{u}</loc><lastmod>{day}</lastmod></url>" for u in urls)
+    sitemap = "".join(f"<url><loc>{escape(base)}/{u}</loc><lastmod>{updated}</lastmod></url>" for u in urls)
     _write(os.path.join(out_dir, "sitemap.xml"),
            f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{sitemap}</urlset>')
     _write(os.path.join(out_dir, "robots.txt"), f"User-agent: *\nAllow: /\nSitemap: {base}/sitemap.xml\n")
@@ -297,7 +301,7 @@ def build_social(cfg, day, drops, out_dir):
     return len(captions)
 
 
-def _product_jsonld(p, compare):
+def _product_jsonld(p, compare, stale=None):
     """Price-comparison markup. We list other shops' prices, so this is an AggregateOffer
     (Google product snippet), not a merchant listing that needs shipping and returns data.
     Empty fields are left out rather than sent as null."""
@@ -306,7 +310,7 @@ def _product_jsonld(p, compare):
     shops = len({c["merchant"] for c in compare})
     data = {
         "@context": "https://schema.org", "@type": "Product", "name": title,
-        "description": (f"Compare UK prices for {title}. Lowest today £{low:.2f} at {compare[0]['merchant']}"
+        "description": (f"Compare UK prices for {title}. Lowest {f'on {stale}' if stale else 'today'} £{low:.2f} at {compare[0]['merchant']}"
                         f"{f', across {shops} retailers' if shops > 1 else ''}."),
         "offers": {"@type": "AggregateOffer", "priceCurrency": "GBP",
                    "lowPrice": f"{low:.2f}", "highPrice": f"{high:.2f}", "offerCount": len(compare)},

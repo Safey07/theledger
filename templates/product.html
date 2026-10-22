@@ -15,7 +15,8 @@
       <div class="verdict v-{{ p.verdict.k }}"><b>{{ p.verdict.label }}</b><span>{{ p.verdict.why }}</span></div>
       <div class="row"><span class="now">{{ site.currency_symbol }}{{ "%.2f"|format(p.price) }}</span>{% if p.usual and p.usual > p.price %}<span class="was">{{ site.currency_symbol }}{{ "%.2f"|format(p.usual) }} usual</span>{% endif %}</div>
       <p class="sub">at {{ p.merchant }}{% if p.ml %} &nbsp;·&nbsp; {{ site.currency_symbol }}{{ "%.2f"|format(p.price / p.ml * 10) }} per 10ml{% endif %}{% if p.low_30 is not none %} &nbsp;·&nbsp; 30-day low {{ site.currency_symbol }}{{ "%.2f"|format(p.low_30) }}{% endif %}</p>
-      {% if cheapest.id != p.id %}<p class="note">Cheaper today: <a href="{{ root }}p/{{ cheapest.slug }}.html">{{ site.currency_symbol }}{{ "%.2f"|format(cheapest.price) }} at {{ cheapest.merchant }}</a></p>{% endif %}
+      {% if stale %}<p class="note">Price recorded on {{ stale }}. Our feeds didn't update today, so check {{ p.merchant }} for the current price.</p>{% endif %}
+      {% if cheapest.id != p.id %}<p class="note">Cheaper{% if not stale %} today{% endif %}: <a href="{{ root }}p/{{ cheapest.slug }}.html">{{ site.currency_symbol }}{{ "%.2f"|format(cheapest.price) }} at {{ cheapest.merchant }}</a></p>{% endif %}
       <a class="btn" href="{{ p.url }}" rel="sponsored nofollow noopener" target="_blank">Buy at {{ p.merchant }}</a>
     </div>
     {% if p.notes %}
@@ -37,7 +38,7 @@
 {% if compare|length > 1 %}
 <h2>Compare {{ compare|length }} retailers</h2>
 <table class="compare">
-  <thead><tr><th>Retailer</th><th>Price today</th><th>30-day low</th><th></th></tr></thead>
+  <thead><tr><th>Retailer</th><th>{% if stale %}Price on {{ stale }}{% else %}Price today{% endif %}</th><th>30-day low</th><th></th></tr></thead>
   <tbody>{% for o in compare %}<tr{% if loop.first %} class="best"{% endif %}>
     <td>{{ o.merchant }}{% if loop.first %} <span class="tagbest">Cheapest</span>{% endif %}</td>
     <td><b>{{ site.currency_symbol }}{{ "%.2f"|format(o.price) }}</b></td>

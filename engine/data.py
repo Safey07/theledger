@@ -254,6 +254,28 @@ def ingest(db, sources, filters, day, names=None):
     return count
 
 
+def allowed_merchants(cfg):
+    """Every retailer name the config currently allows (lower case), or None when any is allowed."""
+    lists = [cfg["filters"].get("merchants_allow") or []] + \
+            [f["merchants_allow"] for f in cfg.get("feeds") or [] if "merchants_allow" in f]
+    if not all(lists):
+        return None
+    names = {n for group in lists for n in group}
+    shown = cfg.get("merchant_names") or {}
+    return {n.lower() for n in names | {shown[n] for n in names if n in shown}}
+
+
+def last_good_day(db, before, allow=None):
+    """Most recent day before `before` with in-stock prices from a retailer we still use."""
+    rows = db.execute(
+        """SELECT DISTINCT pr.day, p.merchant FROM prices pr JOIN products p ON p.id=pr.product_id
+           WHERE pr.day<? AND pr.in_stock=1 ORDER BY pr.day DESC""", (before,))
+    for r in rows:
+        if allow is None or r["merchant"].lower() in allow:
+            return r["day"]
+    return None
+
+
 def history(db, product_id, days=90):
     rows = db.execute(
         "SELECT day, price FROM prices WHERE product_id=? ORDER BY day DESC LIMIT ?",

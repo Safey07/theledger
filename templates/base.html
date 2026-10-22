@@ -124,6 +124,7 @@ button,.btn{background:var(--ink);color:var(--bg);border:0;border-radius:10px;pa
 input[type=email]{flex:1;min-width:0;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:inherit}
 footer{border-top:1px solid var(--line);color:var(--muted);font-size:12px;padding:20px 0 40px;margin-top:20px}
 .demo{background:var(--gold);color:#fff;text-align:center;font-size:12px;padding:6px 16px}
+.demo.stale{background:var(--ink);color:var(--bg)}
 footer .links a{margin-right:16px;color:var(--muted)}
 .prose{max-width:680px;margin:0 auto 60px}
 .prose h2{font-size:28px;margin:36px 0 8px}
@@ -159,6 +160,7 @@ footer .links a{margin-right:16px;color:var(--muted)}
 </head>
 <body>
 {% if demo %}<div class="demo">Demo build with invented prices and fictional retailers.</div>{% endif %}
+{% if stale %}<div class="demo stale" role="status">Retailer feeds didn't update today. Prices shown are from {{ stale }}. Check the retailer for today's price.</div>{% endif %}
 <header class="top"><div class="wrap">
 <a class="logo" href="{{ root }}index.html">The <span>Ledger</span></a>
 <form class="hsearch" action="{{ root }}shop.html" method="get" role="search"><input type="search" name="q" placeholder="Search fragrances" aria-label="Search fragrances"></form>
