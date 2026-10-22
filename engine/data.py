@@ -44,7 +44,7 @@ def _expand_env(value):
 
 
 def read_feed(source):
-    """Return CSV text from a URL or local path. Handles gzip feeds."""
+    """Return feed text from a URL or local path. Handles gzip feeds."""
     if source.startswith("http"):
         with urllib.request.urlopen(source, timeout=120) as resp:
             raw = resp.read()
@@ -63,7 +63,27 @@ def _num(value):
         return None
 
 
-def parse_awin(text):
+SYMBOLS = {"£": "GBP", "€": "EUR", "$": "USD"}
+
+
+def _money(value):
+    """'12.99 GBP' / '£12.99' / '12.99' -> (12.99, 'GBP'), currency '' when the feed doesn't say."""
+    text = str(value or "").strip()
+    cur = next((code for sym, code in SYMBOLS.items() if sym in text), "")
+    m = re.search(r"\b([A-Z]{3})\b", text.upper())
+    if m:
+        cur = m.group(1)
+    num = re.search(r"\d[\d,]*(\.\d+)?", text)
+    return (_num(num.group(0)) if num else None), cur
+
+
+def _in_stock(value, default="1"):
+    v = str(value if value is not None else default).strip().lower().replace("_", " ")
+    return 0 if v in ("0", "false", "no", "n", "out of stock", "outofstock", "sold out", "preorder",
+                      "pre-order", "backorder", "discontinued") else 1
+
+
+def parse_awin(text, feed=None):
     """Map Awin product-feed columns onto our product shape."""
     for row in csv.DictReader(io.StringIO(text)):
         price = _num(row.get("search_price"))
@@ -79,9 +99,87 @@ def parse_awin(text):
             "image": row.get("merchant_image_url") or row.get("aw_image_url") or "",
             "price": price,
             "rrp": _num(row.get("rrp_price")),
-            "in_stock": 0 if str(row.get("in_stock", "1")).strip() in ("0", "false", "no") else 1,
+            "in_stock": _in_stock(row.get("in_stock")),
             "currency": (row.get("currency") or "").strip().upper(),
         }
+
+
+def _google_rows(text):
+    """Rows from a Google-style product feed: RSS/Atom XML with g: fields, or CSV/TSV."""
+    if text.lstrip().startswith("<"):
+        import xml.etree.ElementTree as ET
+        root = ET.fromstring(text.strip())
+        for item in root.iter():
+            if item.tag.split("}")[-1] not in ("item", "entry"):
+                continue
+            row = {}
+            for field in item:
+                key = field.tag.split("}")[-1]
+                if key == "link" and not (field.text or "").strip():
+                    row.setdefault("link", field.get("href", ""))   # Atom puts the link in href
+                else:
+                    row.setdefault(key, (field.text or "").strip())
+            yield row
+        return
+    first = text.split("\n", 1)[0]
+    yield from csv.DictReader(io.StringIO(text), delimiter="\t" if first.count("\t") > first.count(",") else ",")
+
+
+def parse_google(text, feed=None):
+    """Google Merchant-style feeds (Rakuten Advertising and most networks): id, title, brand,
+    price '12.99 GBP', sale_price, link, image_link, availability. One retailer per feed, so the
+    retailer name comes from the feed's 'merchant' setting when the rows don't carry one."""
+    feed = feed or {}
+    for row in _google_rows(text):
+        row = {k.strip().lower().replace("g:", ""): v for k, v in row.items() if k}
+        regular, cur = _money(row.get("price"))
+        sale, sale_cur = _money(row.get("sale_price"))
+        price = sale if sale and (not regular or sale < regular) else regular
+        if not price or not row.get("id"):
+            continue
+        yield {
+            "id": f"{feed.get('name', 'feed')}-{row['id']}",
+            "name": (row.get("title") or "").strip(),
+            "brand": (row.get("brand") or "").strip(),
+            "merchant": (row.get("merchant") or row.get("merchant_name") or feed.get("merchant") or "").strip(),
+            "category": (row.get("product_type") or row.get("google_product_category") or "").strip(),
+            "url": row.get("link") or "",
+            "image": row.get("image_link") or "",
+            "price": price,
+            "rrp": regular if price != regular else None,
+            "in_stock": _in_stock(row.get("availability"), "in stock"),
+            "currency": (sale_cur if price == sale else cur) or feed.get("currency", ""),
+        }
+
+
+GENERIC_FIELDS = ("id", "name", "brand", "merchant", "category", "url", "image", "price", "rrp",
+                  "in_stock", "currency")
+
+
+def parse_generic_csv(text, feed=None):
+    """Any CSV, mapped by 'columns' in config.yaml: {our_field: their_column}.
+    Fields not mapped fall back to the feed's own setting (merchant, currency) or a blank."""
+    feed = feed or {}
+    cols = feed.get("columns") or {}
+    for row in csv.DictReader(io.StringIO(text), delimiter=feed.get("delimiter", ",")):
+        get = {f: (row.get(cols.get(f, f)) or "").strip() for f in GENERIC_FIELDS}
+        price, cur = _money(get["price"])
+        if not price or not get["id"]:
+            continue
+        yield {
+            "id": f"{feed.get('name', 'feed')}-{get['id']}",
+            "name": get["name"], "brand": get["brand"],
+            "merchant": get["merchant"] or feed.get("merchant", ""),
+            "category": get["category"], "url": get["url"], "image": get["image"],
+            "price": price, "rrp": _money(get["rrp"])[0],
+            "in_stock": _in_stock(get["in_stock"] or None),
+            "currency": (get["currency"].upper() or cur or feed.get("currency", "")),
+        }
+
+
+# feeds[].format in config.yaml picks one of these. Switching network is a config change.
+PARSERS = {"awin": parse_awin, "rakuten": parse_google, "google": parse_google,
+           "generic_csv": parse_generic_csv}
 
 
 def _words(words):
@@ -105,21 +203,38 @@ def keep(product, filters):
     return bool(inc and inc.search(hay))
 
 
-def ingest(db, sources, filters, day):
-    """Store today's price for every matching product. Returns count."""
+def _feed(source):
+    """A feed is a config.yaml entry, or a bare path/URL (demo and tests), read as Awin."""
+    return dict(source) if isinstance(source, dict) else {"url": source, "format": "awin"}
+
+
+def feed_filters(feed, filters):
+    """A feed's own merchants_allow (if it has one) replaces the global list for that feed."""
+    return {**filters, "merchants_allow": feed["merchants_allow"]} if "merchants_allow" in feed else filters
+
+
+def ingest(db, sources, filters, day, names=None):
+    """Store today's price for every matching product. Returns count.
+    names maps a feed's retailer spelling to the one shown on the site."""
     count = 0
-    for source in sources:
-        source = _expand_env(source)
-        if not source:          # optional extra feed not set up yet
+    for feed in map(_feed, sources):
+        url = _expand_env(feed.get("url") or "")
+        if not url:             # optional extra feed not set up yet
+            continue
+        parse = PARSERS.get(feed.get("format", "awin"))
+        if not parse:
+            print(f"::warning::Feed {feed.get('name', '')}: unknown format '{feed.get('format')}', skipped")
             continue
         try:
-            text = read_feed(source)
+            text = read_feed(url)
         except Exception as err:   # one broken retailer feed must not stop the others
-            print(f"Feed failed, skipping: {str(err)[:120]}")
+            print(f"::warning::Feed {feed.get('name', '')} failed, skipping: {str(err).replace(url, '<feed url>')[:120]}")
             continue
-        for p in parse_awin(text):
-            if not keep(p, filters):
+        rules = feed_filters(feed, filters)
+        for p in parse(text, feed):
+            if not keep(p, rules):
                 continue
+            p["merchant"] = (names or {}).get(p["merchant"], p["merchant"])
             p["brand"] = clean_brand(p["brand"])
             p["name"] = clean_name(p["brand"], p["name"])
             db.execute(

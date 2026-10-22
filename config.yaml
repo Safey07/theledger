@@ -18,27 +18,30 @@ detection:
   max_digest_items: 12      # items in the daily email
   max_social_cards: 3       # image cards generated per day
 
-# Product feeds. Each one is a CSV in Awin's product-feed format.
-# url can use ${ENV_VAR} so keys never live in the repo.
-# In demo mode the engine reads sample_data/ instead.
-# One Awin "Create-a-Feed" URL can hold every retailer you have joined.
-# The extra slots are optional; empty ones are skipped.
+# Product feeds. Switching network = edit this list and add the secret. No code changes.
+# url uses ${ENV_VAR} so keys never live in the repo. Unset URLs are skipped.
+# format: awin | rakuten (Google-style CSV/TSV/XML, also "google") | generic_csv (needs columns:)
+# Optional per feed:
+#   merchant:         retailer name, for single-retailer feeds whose rows don't name it (Rakuten)
+#   currency:         assumed currency when the feed's prices don't say
+#   merchants_allow:  replaces the global allowlist below for this feed ([] = allow all)
+#   columns:          generic_csv only, {our_field: their_column} for
+#                     id, name, brand, merchant, category, url, image, price, rrp, in_stock, currency
+#   delimiter:        generic_csv only, default ","
+# Awin closed the account on 21 Oct 2026. Its parser stays for any Awin-format feed.
 feeds:
-  - name: "awin_main"
-    url: "${AWIN_FEED_URL}"
-    format: "awin"
-  - name: "awin_2"
-    url: "${AWIN_FEED_URL_2}"
-    format: "awin"
-  - name: "awin_3"
-    url: "${AWIN_FEED_URL_3}"
-    format: "awin"
+  - name: "tfs"
+    url: "${RAKUTEN_FEED_URL}"
+    format: "rakuten"
+    merchant: "The Fragrance Shop"
+    currency: "GBP"
+    merchants_allow: ["The Fragrance Shop"]
 
 # Keep anything someone would buy as a fragrance: bottles, minis, gift sets, discovery sets, mists.
 # Whole-word matching. Excludes skincare, bath and home scent.
 filters:
-  # Only retailers we've applied to on Awin. A retailer shows up the day it approves us.
-  # Add new names here exactly as Awin spells them.
+  # Only retailers we've joined, so every link earns. A retailer shows up the day it approves us.
+  # Spell names exactly as the feed does. These are Awin spellings; other networks may differ.
   merchants_allow: ["Fragrancedirect", "The Fragrance Counter", "Escentual", "allbeauty.com UK", "Perfume Click",
                     "Fragrance Click UK", "Parfumdreams UK", "Perfume Shopping", "Perfume Market UK", "Debenhams UK",
                     "Superdrug UK", "Space NK - UK", "Cult Beauty Global", "Express Chemist", "Beauti Outlet",
@@ -55,6 +58,18 @@ filters:
                      "carrier oil", "essential oil", "soap", "candle", "diffuser", "reed diffuser",
                      "room spray", "wax melt", "home fragrance", "car freshener", "laundry", "fabric",
                      "shampoo", "conditioner", "serum", "cleanser", "face", "moisturiser", "balm", "aftershave balm", "lip", "nail"]
+
+# Retailer names as shown on the site, email and social posts (feed spelling: display name).
+merchant_names:
+  "Fragrancedirect": "Fragrance Direct"
+  "allbeauty.com UK": "allbeauty"
+  "Fragrance Click UK": "Fragrance Click"
+  "Parfumdreams UK": "Parfumdreams"
+  "Perfume Market UK": "Perfume Market"
+  "Debenhams UK": "Debenhams"
+  "Superdrug UK": "Superdrug"
+  "Space NK - UK": "Space NK"
+  "Cult Beauty Global": "Cult Beauty"
 
 # Email digest. Leave provider as "none" to only write the HTML file.
 email:

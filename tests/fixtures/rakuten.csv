@@ -1,0 +1,4 @@
+id,title,brand,price,sale_price,link,image_link,availability,product_type
+TFS1,Sauvage Eau de Parfum 100ml,Dior,115.00 GBP,89.00 GBP,https://example.com/r1,https://example.com/r1.jpg,in stock,Fragrance > Mens
+TFS2,Libre Eau de Parfum 50ml,Yves Saint Laurent,£92.00,,https://example.com/r2,,out of stock,Fragrance > Womens
+TFS3,Sauvage Deodorant Stick 75g,Dior,25.00 GBP,,https://example.com/r3,,in stock,Bath & Body

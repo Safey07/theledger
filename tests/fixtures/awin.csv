@@ -1,0 +1,5 @@
+aw_product_id,merchant_id,merchant_name,product_name,brand_name,category_name,search_price,rrp_price,aw_deep_link,merchant_image_url,in_stock,currency
+101,9001,Test Shop,Dior Sauvage Eau de Parfum 100ml,DIOR,Men's Fragrance,89.00,115.00,https://example.com/a,https://example.com/a.jpg,1,GBP
+102,9001,Test Shop,Chanel Chance Eau Tendre EDT 50ml,CHANEL,Women's Fragrance,72.50,,https://example.com/b,,0,GBP
+103,9001,Test Shop,Dior Sauvage Shower Gel 250ml,DIOR,Bath,25.00,,https://example.com/c,,1,GBP
+104,9002,Euro Shop,Dior Sauvage Eau de Parfum 100ml,DIOR,Men's Fragrance,99.00,,https://example.com/d,,1,EUR

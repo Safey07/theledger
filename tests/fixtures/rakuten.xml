@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">
+<channel><title>Test feed</title>
+<item><g:id>TFS1</g:id><g:title>Sauvage Eau de Parfum 100ml</g:title><g:brand>Dior</g:brand>
+<g:price>115.00 GBP</g:price><g:sale_price>89.00 GBP</g:sale_price><g:link>https://example.com/r1</g:link>
+<g:image_link>https://example.com/r1.jpg</g:image_link><g:availability>in_stock</g:availability>
+<g:product_type>Fragrance &gt; Mens</g:product_type></item>
+<item><g:id>TFS2</g:id><g:title>Libre Eau de Parfum 50ml</g:title><g:brand>Yves Saint Laurent</g:brand>
+<g:price>92.00 GBP</g:price><g:link>https://example.com/r2</g:link><g:availability>out_of_stock</g:availability>
+<g:product_type>Fragrance &gt; Womens</g:product_type></item>
+</channel></rss>

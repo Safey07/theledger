@@ -66,8 +66,7 @@ def main():
     else:
         db = data.connect(os.path.join(HERE, "data", "prices.db"))
         day = date.today().isoformat()
-        sources = [f["url"] for f in cfg["feeds"]]
-        count = data.ingest(db, sources, cfg["filters"], day)
+        count = data.ingest(db, cfg["feeds"], cfg["filters"], day, cfg.get("merchant_names"))
 
     drops = data.detect_drops(db, day, cfg["detection"])
     pages = render.build_site(db, cfg, day, drops, os.path.join(out, "site"), demo=args.demo)
