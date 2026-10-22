@@ -1,5 +1,5 @@
 {% from "_bottle.html" import bottle %}<a class="card" href="{{ root }}p/{{ c.s }}.html">
-  <div class="thumb">{% if c.i %}<img src="{{ c.i }}" alt="" loading="lazy" onerror="this.remove()">{% endif %}{{ bottle(c.b, c.c, c.h) }}{% if c.d %}<span class="pct">−{{ c.d }}%</span>{% endif %}</div>
+  <div class="thumb">{% if c.i %}<img src="{{ c.i }}" alt="" width="300" height="300" loading="lazy" decoding="async" onerror="this.remove()">{% endif %}{{ bottle(c.b, c.c, c.h) }}{% if c.d %}<span class="pct">−{{ c.d }}%</span>{% endif %}</div>
   <div class="info">
     <div class="brand"><span>{{ c.b }}</span>{% if c.f %}<em>{{ c.f }}</em>{% endif %}</div>
     <div class="name">{{ c.n }}</div>

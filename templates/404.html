@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Page not found | {{ site.name }}{% endblock %}
+{% block desc %}This page doesn't exist. It may have moved, or the product may no longer be listed.{% endblock %}
+{% block body %}
+<article class="prose">
+<h1>Page not found</h1>
+<p class="lede">This page doesn't exist. If it was a fragrance, the retailer may have stopped listing it.</p>
+<p><a class="btn" href="{{ root }}shop.html">Browse every fragrance</a> <a class="btn ghost" href="{{ root }}index.html">Today's drops</a></p>
+{% if guides %}<h2>Buying guides</h2>
+<ul>{% for g in guides %}<li><a href="{{ root }}guides/{{ g.slug }}.html">{{ g.title }}</a></li>{% endfor %}</ul>{% endif %}
+</article>
+{% endblock %}

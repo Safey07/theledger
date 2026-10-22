@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block body %}
+<script type="application/ld+json">{{ site_jsonld|safe }}</script>
 <section class="hero">
   <p class="meta">{{ today_label }}</p>
   <h1>{% if stale %}Fragrance prices from {{ stale }}{% elif counts.all %}Today's fragrance price drops{% else %}Honest UK fragrance prices, checked every morning{% endif %}</h1>
@@ -22,7 +23,7 @@
 {% if drops %}
 <div class="toolbar" id="dropbar">
   <div class="chips" role="group" aria-label="Who for">
-    <button class="chip on" data-g="">All</button><button class="chip" data-g="men">For him</button><button class="chip" data-g="women">For her</button><button class="chip" data-g="unisex">Unisex</button><button class="chip" data-k="1">Niche</button>
+    <button class="chip on" data-g="" aria-pressed="true">All</button><button class="chip" data-g="men" aria-pressed="false">For him</button><button class="chip" data-g="women" aria-pressed="false">For her</button><button class="chip" data-g="unisex" aria-pressed="false">Unisex</button><button class="chip" data-k="1" aria-pressed="false">Niche</button>
   </div>
   <div class="selects"><select aria-label="Sort" data-sort><option value="d">Biggest drop</option><option value="pa">Price: low to high</option><option value="pd">Price: high to low</option></select></div>
 </div>
@@ -87,7 +88,7 @@
     none.hidden=shown>0;
   }
   bar.querySelectorAll('.chip').forEach(function(b){b.onclick=function(){
-    bar.querySelectorAll('.chip').forEach(function(x){x.classList.remove('on')});b.classList.add('on');
+    bar.querySelectorAll('.chip').forEach(function(x){x.classList.remove('on');x.setAttribute('aria-pressed','false')});b.classList.add('on');b.setAttribute('aria-pressed','true');
     f.g=b.dataset.g||'';f.k=b.dataset.k||'';apply();};});
   bar.querySelector('[data-sort]').onchange=function(){
     var v=this.value;

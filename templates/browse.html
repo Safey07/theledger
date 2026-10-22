@@ -13,7 +13,7 @@
 <div class="toolbar browse" id="bar">
   <input class="search" type="search" id="q" placeholder="Search brand or fragrance" aria-label="Search">
   <div class="chips" role="group" aria-label="Who for">
-    <button class="chip" data-g="">All</button><button class="chip" data-g="men">For him</button><button class="chip" data-g="women">For her</button><button class="chip" data-g="unisex">Unisex</button>
+    <button class="chip" data-g="" aria-pressed="false">All</button><button class="chip" data-g="men" aria-pressed="false">For him</button><button class="chip" data-g="women" aria-pressed="false">For her</button><button class="chip" data-g="unisex" aria-pressed="false">Unisex</button>
   </div>
   <div class="selects">
     <select id="brand" aria-label="Brand"><option value="">All brands</option>{% for b in brand_list %}<option>{{ b }}</option>{% endfor %}</select>
@@ -23,7 +23,8 @@
     <label class="tog"><input type="checkbox" id="deals"> Good time to buy</label>
   </div>
 </div>
-<p class="count" id="count">{{ total }} fragrances</p>
+<noscript><p class="count">Filters and search need JavaScript. Showing the first {{ first|length }}.</p></noscript>
+<p class="count" id="count" aria-live="polite">{{ total }} fragrances</p>
 <div class="grid" id="grid">{% for c in first %}{% include "_ccard.html" %}{% endfor %}</div>
 <p class="empty" id="none" hidden>Nothing matches those filters. Try widening the price or clearing the search.</p>
 <p class="more"><button class="btn ghost" id="more"{% if total <= 24 %} hidden{% endif %}>Show more</button></p>
@@ -44,7 +45,7 @@
     return s+'</svg>';
   }
   function card(c){
-    return '<a class="card" href="p/'+c.s+'.html"><div class="thumb">'+(c.i?'<img src="'+esc(c.i)+'" alt="" loading="lazy" onerror="this.remove()">':'')+bottle(c.b,c.c,c.h)+
+    return '<a class="card" href="p/'+c.s+'.html"><div class="thumb">'+(c.i?'<img src="'+esc(c.i)+'" alt="" width="300" height="300" loading="lazy" decoding="async" onerror="this.remove()">':'')+bottle(c.b,c.c,c.h)+
       (c.d?'<span class="pct">\u2212'+c.d+'%</span>':'')+'</div><div class="info"><div class="brand"><span>'+esc(c.b)+'</span>'+(c.f?'<em>'+esc(c.f)+'</em>':'')+'</div><div class="name">'+esc(c.n)+'</div>'+
       '<div class="row"><span class="now">'+SYM+c.p.toFixed(2)+'</span>'+(c.u?'<span class="was">'+SYM+c.u.toFixed(2)+'</span>':'')+'</div>'+
       '<div class="meta">'+(c.v==='buy'?'<span class="atl">Good time to buy</span>':'')+'<span>'+esc(c.m)+'</span>'+(c.r>1?'<span class="dot">'+c.r+' retailers</span>':'')+'</div></div></a>';
@@ -66,7 +67,7 @@
     shown=Math.min(shown+PAGE,list.length); more.hidden=shown>=list.length;
   }
   function sync(){
-    document.querySelectorAll('#bar .chip').forEach(function(b){b.classList.toggle('on',(b.dataset.g||'')===st.g)});
+    document.querySelectorAll('#bar .chip').forEach(function(b){var on=(b.dataset.g||'')===st.g;b.classList.toggle('on',on);b.setAttribute('aria-pressed',on)});
     $('brand').value=st.b; $('max').value=st.max; $('type').value=st.k; $('deals').checked=st.deals; $('sort').value=st.sort;
   }
   document.querySelectorAll('#bar .chip').forEach(function(b){b.onclick=function(){st.g=b.dataset.g||'';sync();filter();}});

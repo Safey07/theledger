@@ -2,6 +2,7 @@
 {% block title %}{{ page.title }} | {{ site.name }}{% endblock %}
 {% block desc %}{{ page.description }}{% endblock %}
 {% block canon %}{{ canon }}{% endblock %}
+{% block ogtype %}{% if jsonld %}article{% else %}website{% endif %}{% endblock %}
 {% block body %}
 <article class="prose">
 <h1>{{ page.title }}</h1>

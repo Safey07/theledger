@@ -170,7 +170,10 @@ def build_site(db, cfg, day, drops, out_dir, demo=False, prices_from=None):
     drop_brands = sorted({d["brand"] for d in drops})
     _write(os.path.join(out_dir, "index.html"), env.get_template("index.html").render(
         **common, root="", drops=drops, recent=recent[:12], today_label=today_label,
-        counts=counts, drop_brands=drop_brands, top=catalogue[:8]))
+        counts=counts, drop_brands=drop_brands, top=catalogue[:8], site_jsonld=_site_jsonld(site)))
+    # GitHub Pages serves this for any missing URL, at any depth, so links are root-relative
+    _write(os.path.join(out_dir, "404.html"), env.get_template("404.html").render(
+        **common, root="/", noindex=True, nocanon=True))
 
     # Browse pages: shop all plus collections. First 24 rendered for search engines, the rest load from JSON.
     # Empty ones still exist (nav links to them) but stay out of search engines until they have prices.
@@ -190,7 +193,7 @@ def build_site(db, cfg, day, drops, out_dir, demo=False, prices_from=None):
         p["chart"] = price_chart(p["pts"], sym)
         p["brand_slug"] = slugify(p["brand"])
         compare = sorted(by_name[match_key(p["brand"], p["name"])], key=lambda o: o["price"])
-        p["jsonld"] = _product_jsonld(p, compare, common["stale"])
+        p["jsonld"] = _product_jsonld(p, compare, common["stale"], site["base_url"])
         more = [c for c in catalogue if c["b"] == p["brand"] and c["n"] != p["name"]][:4]
         _write(os.path.join(out_dir, "p", f"{p['slug']}.html"),
                env.get_template("product.html").render(**common, root="../", p=p, compare=compare,
@@ -309,7 +312,28 @@ def build_social(cfg, day, drops, out_dir):
     return len(captions)
 
 
-def _product_jsonld(p, compare, stale=None):
+def _site_jsonld(site):
+    """Organization and WebSite (with site search) for the homepage."""
+    base = site["base_url"].rstrip("/")
+    same = [u for u in (
+        site.get("instagram") and f"https://www.instagram.com/{site['instagram']}/",
+        site.get("tiktok") and f"https://www.tiktok.com/@{site['tiktok']}",
+        site.get("facebook") and f"https://www.facebook.com/{site['facebook']}") if u]
+    org = {"@type": "Organization", "@id": f"{base}/#org", "name": site["name"], "url": f"{base}/",
+           "logo": f"{base}/logo.png", "description": site["tagline"]}
+    if site.get("contact_email"):
+        org["email"] = site["contact_email"]
+    if same:
+        org["sameAs"] = same
+    web = {"@type": "WebSite", "@id": f"{base}/#website", "name": site["name"], "url": f"{base}/",
+           "inLanguage": "en-GB", "publisher": {"@id": f"{base}/#org"},
+           "potentialAction": {"@type": "SearchAction",
+                               "target": {"@type": "EntryPoint", "urlTemplate": f"{base}/shop.html?q={{search_term_string}}"},
+                               "query-input": "required name=search_term_string"}}
+    return json.dumps({"@context": "https://schema.org", "@graph": [org, web]}).replace("</", "<\\/")
+
+
+def _product_jsonld(p, compare, stale=None, base_url=""):
     """Price-comparison markup. We list other shops' prices, so this is an AggregateOffer
     (Google product snippet), not a merchant listing that needs shipping and returns data.
     Empty fields are left out rather than sent as null."""
@@ -318,6 +342,7 @@ def _product_jsonld(p, compare, stale=None):
     shops = len({c["merchant"] for c in compare})
     data = {
         "@context": "https://schema.org", "@type": "Product", "name": title,
+        "url": f"{base_url.rstrip('/')}/p/{p['slug']}.html",
         "description": (f"Compare UK prices for {title}. Lowest {f'on {stale}' if stale else 'today'} £{low:.2f} at {compare[0]['merchant']}"
                         f"{f', across {shops} retailers' if shops > 1 else ''}."),
         "offers": {"@type": "AggregateOffer", "priceCurrency": "GBP",

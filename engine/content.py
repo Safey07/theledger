@@ -44,10 +44,13 @@ def build_content(env, common, cfg, out_dir, write):
 
     guides = load_guides()
     for g in guides:
+        base = site["base_url"].rstrip("/")
+        org = {"@type": "Organization", "name": site["name"], "url": f"{base}/", "logo": f"{base}/logo.png"}
         jsonld = json.dumps({
             "@context": "https://schema.org", "@type": "Article",
             "headline": g["title"], "description": g["description"],
-            "publisher": {"@type": "Organization", "name": site["name"]},
+            "url": f"{base}/guides/{g['slug']}.html", "image": f"{base}/og.png",
+            "author": org, "publisher": org,
         }).replace("</", "<\\/")
         write(os.path.join(out_dir, "guides", f"{g['slug']}.html"),
               tpl.render(**common, root="../", page=g, html=markdown.markdown(g["body"]),

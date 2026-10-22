@@ -1,12 +1,13 @@
 {% extends "base.html" %}
 {% from "_bottle.html" import bottle %}
-{% block title %}{{ p.brand }} {{ p.name }}: cheapest UK price and history | {{ site.name }}{% endblock %}
-{% block desc %}{% if p.notes %}{{ p.notes.f }} fragrance. {% endif %}{{ p.brand }} {{ p.name }} from {{ site.currency_symbol }}{{ "%.2f"|format(cheapest.price) }} at {{ cheapest.merchant }}. Compare {{ compare|length }} UK retailers and see 90 days of price history.{% endblock %}
+{% block title %}{{ p.brand }} {{ p.name }} at {{ p.merchant }}: price and history | {{ site.name }}{% endblock %}
+{% block desc %}{{ p.brand }} {{ p.name }} is {{ site.currency_symbol }}{{ "%.2f"|format(p.price) }} at {{ p.merchant }}{% if stale %} (on {{ stale }}){% endif %}.{% if compare|length > 1 %} Cheapest of {{ compare|length }} UK retailers: {{ site.currency_symbol }}{{ "%.2f"|format(cheapest.price) }} at {{ cheapest.merchant }}.{% endif %} See its daily price history{% if p.notes %} and {{ p.notes.f|lower }} scent notes{% endif %}.{% endblock %}
+{% block ogimage %}{{ p.image or site.base_url ~ "/og.png" }}{% endblock %}
 {% block canon %}p/{{ p.slug }}.html{% endblock %}
 {% block body %}
 <p class="crumbs"><a href="{{ root }}shop.html">Shop</a> &nbsp;/&nbsp; <a href="{{ root }}{{ p.gender }}.html">{{ p.gender_label }}</a> &nbsp;/&nbsp; <a href="{{ root }}b/{{ p.brand_slug }}.html">{{ p.brand }}</a></p>
 <div class="pgrid">
-  <div class="thumb">{% if p.image %}<img src="{{ p.image }}" alt="{{ p.brand }} {{ p.name }}" onerror="this.remove()">{% endif %}{{ bottle(p.brand, p.conc, p.shape) }}{% if p.usual and p.usual > p.price and ((p.usual - p.price) / p.usual * 100)|round >= 5 %}<span class="pct">−{{ ((p.usual - p.price) / p.usual * 100)|round|int }}%</span>{% endif %}</div>
+  <div class="thumb">{% if p.image %}<img src="{{ p.image }}" alt="{{ p.brand }} {{ p.name }}" width="440" height="440" onerror="this.remove()">{% endif %}{{ bottle(p.brand, p.conc, p.shape) }}{% if p.usual and p.usual > p.price and ((p.usual - p.price) / p.usual * 100)|round >= 5 %}<span class="pct">−{{ ((p.usual - p.price) / p.usual * 100)|round|int }}%</span>{% endif %}</div>
   <div>
     <p class="meta"><a href="{{ root }}b/{{ p.brand_slug }}.html" style="text-decoration:none">{{ p.brand }}</a></p>
     <h1>{{ p.name }}</h1>

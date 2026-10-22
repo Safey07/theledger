@@ -1,5 +1,5 @@
 {% from "_bottle.html" import bottle %}<a class="card" href="{{ root }}p/{{ d.slug }}.html" data-g="{{ d.gender }}" data-k="{{ 1 if d.niche else 0 }}" data-p="{{ '%.2f'|format(d.price) }}" data-d="{{ d.pct or 0 }}">
-  <div class="thumb">{% if d.image %}<img src="{{ d.image }}" alt="" loading="lazy" onerror="this.remove()">{% endif %}{{ bottle(d.brand, d.conc, d.shape) }}{% if d.pct %}<span class="pct">−{{ d.pct }}%</span>{% endif %}</div>
+  <div class="thumb">{% if d.image %}<img src="{{ d.image }}" alt="" width="300" height="300" loading="lazy" decoding="async" onerror="this.remove()">{% endif %}{{ bottle(d.brand, d.conc, d.shape) }}{% if d.pct %}<span class="pct">−{{ d.pct }}%</span>{% endif %}</div>
   <div class="info">
     <div class="brand">{{ d.brand }}</div>
     <div class="name">{{ d.name }}</div>
