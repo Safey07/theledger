@@ -43,7 +43,8 @@ def build_content(env, common, cfg, out_dir, write):
         urls.append(f"{page['slug']}.html")
 
     guides = load_guides()
-    for g in guides:
+    for i, g in enumerate(guides):
+        related = [guides[(i + k) % len(guides)] for k in range(1, min(4, len(guides)))]
         base = site["base_url"].rstrip("/")
         org = {"@type": "Organization", "name": site["name"], "url": f"{base}/", "logo": f"{base}/logo.png"}
         jsonld = json.dumps({
@@ -54,7 +55,7 @@ def build_content(env, common, cfg, out_dir, write):
         }).replace("</", "<\\/")
         write(os.path.join(out_dir, "guides", f"{g['slug']}.html"),
               tpl.render(**common, root="../", page=g, html=markdown.markdown(g["body"]),
-                         canon=f"guides/{g['slug']}.html", jsonld=jsonld))
+                         canon=f"guides/{g['slug']}.html", jsonld=jsonld, related=related))
         urls.append(f"guides/{g['slug']}.html")
 
     index = "".join(

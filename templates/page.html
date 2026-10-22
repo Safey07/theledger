@@ -8,6 +8,9 @@
 <h1>{{ page.title }}</h1>
 <p class="lede">{{ page.description }}</p>
 {{ html|safe }}
+{% if related %}<h2>More buying guides</h2>
+<ul>{% for g in related %}<li><a href="{{ g.slug }}.html">{{ g.title }}</a></li>{% endfor %}</ul>
+<p><a href="{{ root }}guides.html">All guides</a></p>{% endif %}
 </article>
 {% if jsonld %}<script type="application/ld+json">{{ jsonld|safe }}</script>{% endif %}
 {% endblock %}
