@@ -148,6 +148,7 @@ footer .links a{margin-right:16px;color:var(--muted)}
 .prose h2{font-size:28px;margin:36px 0 8px}
 .prose p,.prose li{font-size:16px;line-height:1.7}
 .prose a{color:var(--gold)}
+.picks{list-style:none;padding:0;margin:0 0 20px}.picks li{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}.picks li a{white-space:nowrap;font-size:14px}
 .guides{display:grid;gap:14px;margin:20px 0}
 .guide{display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;text-decoration:none}
 .guide:hover{border-color:var(--gold)}
@@ -193,11 +194,11 @@ footer .links a{margin-right:16px;color:var(--muted)}
 <header class="top"><div class="wrap">
 <a class="logo" href="{{ root }}index.html">The <span>Ledger</span></a>
 <form class="hsearch" action="{{ root }}shop.html" method="get" role="search"><input type="search" name="q" placeholder="Search fragrances" aria-label="Search fragrances"></form>
-<nav class="main"><a href="{{ root }}index.html">Today's drops</a><a href="{{ root }}shop.html">Shop all</a><a href="{{ root }}men.html">For him</a><a href="{{ root }}women.html">For her</a><a href="{{ root }}niche.html">Niche</a><a href="{{ root }}brands.html">Brands</a><a href="{{ root }}guides.html">Guides</a></nav>
+<nav class="main"><a href="{{ root }}index.html">Today's drops</a><a href="{{ root }}shop.html">Shop all</a><a href="{{ root }}men.html">For him</a><a href="{{ root }}women.html">For her</a><a href="{{ root }}niche.html">Niche</a><a href="{{ root }}brands.html">Brands</a><a href="{{ root }}guides.html">Guides</a>{% if amazon_tag %}<a href="{{ root }}popular.html">Popular</a>{% endif %}</nav>
 </div></header>
 <main class="wrap" id="main">{% block body %}{% endblock %}</main>
 <footer><div class="wrap">
-Prices update daily and can change at any time. {{ site.name }} earns a commission when you buy through links on this site, at no extra cost to you. <a href="{{ root }}affiliate-disclosure.html">How this works</a>.
+Prices update daily and can change at any time. {{ site.name }} earns a commission when you buy through links on this site, at no extra cost to you. <a href="{{ root }}affiliate-disclosure.html">How this works</a>.{% if amazon_tag %} As an Amazon Associate we earn from qualifying purchases.{% endif %}
 Last updated {{ updated }}.
 <p class="links"><a href="{{ root }}about.html">About</a><a href="{{ root }}how-we-track-prices.html">How we track prices</a><a href="{{ root }}guides.html">Guides</a><a href="{{ root }}contact.html">Contact</a><a href="{{ root }}affiliate-disclosure.html">Affiliate disclosure</a><a href="{{ root }}privacy.html">Privacy</a>{% if site.instagram %}<a href="https://www.instagram.com/{{ site.instagram }}/" rel="noopener" target="_blank">Instagram</a>{% endif %}{% if site.tiktok %}<a href="https://www.tiktok.com/@{{ site.tiktok }}" rel="noopener" target="_blank">TikTok</a>{% endif %}{% if site.facebook %}<a href="https://www.facebook.com/{{ site.facebook }}" rel="noopener" target="_blank">Facebook</a>{% endif %}</p>
 </div></footer>
