@@ -74,6 +74,34 @@ merchant_names:
   "Space NK - UK": "Space NK"
   "Cult Beauty Global": "Cult Beauty"
 
+# Amazon Associates UK. Leave tag empty and no Amazon link appears anywhere on the site.
+# Links are Amazon search links (no prices shown: we only show prices we have tracked ourselves).
+amazon:
+  tag: ""                   # e.g. theledgeruk-21 (from Associates Central)
+  picks:                    # well-known designer bottles for the "Popular fragrances" page
+    - {brand: "Dior", name: "Sauvage Eau de Toilette", g: "Men"}
+    - {brand: "Chanel", name: "Bleu de Chanel Eau de Parfum", g: "Men"}
+    - {brand: "Paco Rabanne", name: "1 Million Eau de Toilette", g: "Men"}
+    - {brand: "Jean Paul Gaultier", name: "Le Male Elixir", g: "Men"}
+    - {brand: "Giorgio Armani", name: "Acqua di Giò Profondo", g: "Men"}
+    - {brand: "Giorgio Armani", name: "Stronger With You Intensely", g: "Men"}
+    - {brand: "Versace", name: "Eros Eau de Toilette", g: "Men"}
+    - {brand: "Hugo Boss", name: "Boss Bottled Eau de Toilette", g: "Men"}
+    - {brand: "Valentino", name: "Born in Roma Uomo Eau de Toilette", g: "Men"}
+    - {brand: "Yves Saint Laurent", name: "Y Eau de Parfum", g: "Men"}
+    - {brand: "Chanel", name: "Coco Mademoiselle Eau de Parfum", g: "Women"}
+    - {brand: "Yves Saint Laurent", name: "Libre Eau de Parfum", g: "Women"}
+    - {brand: "Yves Saint Laurent", name: "Black Opium Eau de Parfum", g: "Women"}
+    - {brand: "Lancôme", name: "La Vie Est Belle Eau de Parfum", g: "Women"}
+    - {brand: "Carolina Herrera", name: "Good Girl Eau de Parfum", g: "Women"}
+    - {brand: "Viktor&Rolf", name: "Flowerbomb Eau de Parfum", g: "Women"}
+    - {brand: "Dior", name: "Miss Dior Eau de Parfum", g: "Women"}
+    - {brand: "Prada", name: "Paradoxe Eau de Parfum", g: "Women"}
+    - {brand: "Mugler", name: "Alien Eau de Parfum", g: "Women"}
+    - {brand: "Gucci", name: "Bloom Eau de Parfum", g: "Women"}
+    - {brand: "Burberry", name: "Her Eau de Parfum", g: "Women"}
+    - {brand: "Valentino", name: "Donna Born in Roma Eau de Parfum", g: "Women"}
+
 # Email digest. Leave provider as "none" to only write the HTML file.
 email:
   provider: "none"          # "buttondown" once you have an account
