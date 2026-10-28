@@ -18,7 +18,8 @@
       <p class="sub">at {{ p.merchant }}{% if p.ml %} &nbsp;·&nbsp; {{ site.currency_symbol }}{{ "%.2f"|format(p.price / p.ml * 10) }} per 10ml{% endif %}{% if p.low_30 is not none %} &nbsp;·&nbsp; 30-day low {{ site.currency_symbol }}{{ "%.2f"|format(p.low_30) }}{% endif %}{% if not stale %}<br>Price checked {{ checked }} UK time{% endif %}</p>
       {% if stale %}<p class="note">Price recorded on {{ stale }}. Our feeds didn't update today, so check {{ p.merchant }} for the current price.</p>{% endif %}
       {% if cheapest.id != p.id %}<p class="note">Cheaper{% if not stale %} today{% endif %}: <a href="{{ root }}p/{{ cheapest.slug }}.html">{{ site.currency_symbol }}{{ "%.2f"|format(cheapest.price) }} at {{ cheapest.merchant }}</a></p>{% endif %}
-      <a class="btn" href="{{ p.url }}" rel="sponsored nofollow noopener" target="_blank">Buy at {{ p.merchant }}</a>
+      <a class="btn" href="{{ p.url }}" rel="sponsored nofollow noopener" target="_blank">Buy at {{ p.merchant }}</a>{% if amazon_tag %}
+      <a class="btn ghost" href="https://www.amazon.co.uk/s?k={{ (p.brand ~ ' ' ~ p.name)|urlencode }}&amp;tag={{ amazon_tag|urlencode }}" rel="sponsored nofollow noopener" target="_blank">Compare on Amazon</a>{% endif %}
     </div>
     {% if p.notes %}
     <div class="scent">
