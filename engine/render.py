@@ -117,6 +117,7 @@ def build_site(db, cfg, day, drops, out_dir, demo=False, prices_from=None):
         shutil.copytree(static, out_dir)
     action = cfg.get("signup_action", "#")
     common = {"site": site, "updated": day, "demo": demo,
+              "amazon_tag": (cfg.get("amazon") or {}).get("tag") or None,
               "signup_action": action if action and action != "#" else None,
               "collections": COLLECTIONS, "guides": load_guides(),
               "stale": date.fromisoformat(prices_from).strftime("%-d %B %Y") if prices_from else None,
