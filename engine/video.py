@@ -143,7 +143,9 @@ def reel_caption(cfg, d):
     sym = cfg["site"]["currency_symbol"]
     tag = re.sub(r"[^a-z0-9]", "", d["brand"].lower())
     low = "\nLowest price we've tracked." if d.get("all_time_low") else ""
-    return (f"{d['brand']} {d['name']}: {sym}{d['price']:.2f} at {d['merchant']}, "
+    from .ai import reel_hook
+    hook = reel_hook(cfg, d)
+    return (f"{hook + chr(10) + chr(10) if hook else ''}{d['brand']} {d['name']}: {sym}{d['price']:.2f} at {d['merchant']}, "
             f"down {d['pct']}% from its usual {sym}{d['was']:.2f}.{low}\n\n"
             f"Every drop we post is checked against 30 days of real prices. "
             f"Link in bio for today's full list.\n\n"
