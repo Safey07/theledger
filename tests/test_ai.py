@@ -69,10 +69,26 @@ def test_writer_keeps_only_checked_posts(monkeypatch):
     bad = good_post()
     bad["slug"] = "bad-one"
     bad["caption"] += "\nSave 47 pounds."
-    monkeypatch.setattr(ai, "ask", lambda *a, **k: json.dumps([good_post(), bad]))
+    replies = iter(["```json\n" + json.dumps(good_post()) + "\n```", json.dumps(bad), json.dumps(bad)])
+    monkeypatch.setattr(ai, "ask", lambda *a, **k: next(replies))
     good, rejected = ai.write_evergreen(CFG, POSTS, 2, [])
     assert [p["slug"] for p in good] == ["storing-fragrance"]
     assert len(rejected) == 1 and "47" in rejected[0]
+
+
+def test_writer_retries_with_feedback(monkeypatch):
+    import json
+    bad = good_post()
+    bad["caption"] += "\nSave 47 pounds."
+    prompts = []
+
+    def fake(prompt, *a, **k):
+        prompts.append(prompt)
+        return json.dumps(bad if len(prompts) == 1 else good_post())
+    monkeypatch.setattr(ai, "ask", fake)
+    good, rejected = ai.write_evergreen(CFG, POSTS, 1, [])
+    assert [p["slug"] for p in good] == ["storing-fragrance"] and not rejected
+    assert "47" in prompts[1]
 
 
 def test_pasted_key_with_newline_is_cleaned(monkeypatch):

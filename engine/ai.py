@@ -134,15 +134,30 @@ def check_post(post, existing_slugs, retailers):
     return problems
 
 
+def _parse_post(text):
+    """Pull one JSON object out of a reply, tolerating ```json fences or a stray sentence."""
+    if not text:
+        return None
+    m = re.search(r"\{.*\}", text, re.S)
+    try:
+        return json.loads(m.group(0)) if m else None
+    except ValueError:
+        return None
+
+
 def write_evergreen(cfg, existing, count, retailers):
-    """Ask Claude for `count` new evergreen carousels. Returns (good_posts, rejected_reasons)."""
+    """Ask Claude for `count` new evergreen carousels, one per call so no reply gets cut off.
+    Each post that fails the checker gets one retry with the problems fed back.
+    Returns (good_posts, rejected_reasons)."""
     ai = settings(cfg)
     slugs = {p["slug"] for p in existing}
     clean = [p for p in existing if not check_post(p, set(), retailers)]
     example = {k: clean[0][k] for k in ("slug", "caption", "slides")} if clean else {}
-    covered = "\n".join(f"- {p['slug']}: {p['caption'].strip().splitlines()[0]}" for p in existing)
-    prompt = f"""Write {count} new Instagram carousel posts for The Ledger, a UK fragrance price tracker.
-They post on days with no price data, so they teach UK buyers how to buy fragrance well.
+    good, bad = [], []
+    for _ in range(count):
+        covered = "\n".join(f"- {p['slug']}: {p['caption'].strip().splitlines()[0]}" for p in existing + good)
+        prompt = f"""Write one new Instagram carousel post for The Ledger, a UK fragrance price tracker.
+It posts on days with no price data, so it teaches UK buyers how to buy fragrance well.
 
 Topics already covered (do not repeat them):
 {covered}
@@ -152,9 +167,9 @@ spotting a fake listing, seasonal scents, layering, gifting without overspending
 "flanker" means, how to test a scent in store, niche versus designer value.
 
 Strict rules, a checker rejects any post that breaks them:
-- No numbers at all, except our own rules: 30-day price history, at least 10% and £5 below it.
+- No digits at all, except our own rules: 30-day price history, at least 10% and £5 below it.
 - No invented facts, studies, surveys, statistics or quotes. Only general buying advice.
-- No retailer names, no prices, no hashtags, no links, no emojis, no em dashes.
+- No retailer or shop names, no prices, no hashtags, no links, no emojis, no em dashes.
 - British English. Calm, premium, useful.
 - slug: lowercase-with-hyphens, max 40 chars.
 - caption: 3 short paragraphs, first line is the hook, end with the line "theledgeruk.co.uk (link in bio)".
@@ -164,22 +179,21 @@ Strict rules, a checker rejects any post that breaks them:
 Here is an existing post as the exact shape to follow:
 {json.dumps(example, ensure_ascii=False, indent=1)}
 
-Reply with a JSON array of {count} posts and nothing else."""
-    text = ask(prompt, ai["writer_model"], max_tokens=6000)
-    if not text:
-        return [], ["no reply from the API"]
-    m = re.search(r"\[.*\]", text, re.S)
-    try:
-        posts = json.loads(m.group(0)) if m else []
-    except ValueError:
-        return [], ["reply was not valid JSON"]
-    good, bad = [], []
-    for post in posts:
-        issues = check_post(post, slugs, retailers)
+Reply with one JSON object and nothing else."""
+        post, issues = None, ["no reply from the API"]
+        for attempt in range(2):
+            ask_prompt = prompt if attempt == 0 else (
+                prompt + "\n\nYour last attempt was rejected for: " + "; ".join(issues) + ". Fix those and reply again.")
+            post = _parse_post(ask(ask_prompt, ai["writer_model"], max_tokens=2500))
+            issues = check_post(post, slugs, retailers) if post is not None else ["reply was not valid JSON"]
+            if not issues:
+                break
         if issues:
-            bad.append(f"{post.get('slug', '?') if isinstance(post, dict) else '?'}: {'; '.join(issues)}")
-        else:
-            slugs.add(post["slug"])
-            good.append({"slug": post["slug"], "caption": post["caption"].strip() + "\n",
-                         "slides": post["slides"]})
+            name = post.get("slug", "?") if isinstance(post, dict) else "?"
+            bad.append(f"{name}: {'; '.join(issues)}")
+            if issues == ["no reply from the API"]:
+                break
+            continue
+        slugs.add(post["slug"])
+        good.append({"slug": post["slug"], "caption": post["caption"].strip() + "\n", "slides": post["slides"]})
     return good, bad
