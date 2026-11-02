@@ -31,7 +31,8 @@ def settings(cfg):
 
 def ask(prompt, model, system=VOICE, max_tokens=600, key=None):
     """One Messages API call. Returns the text, or None if there is no key or anything fails."""
-    key = key or os.environ.get("ANTHROPIC_API_KEY")
+    # .strip(): a key pasted into GitHub secrets often carries a trailing newline
+    key = (key or os.environ.get("ANTHROPIC_API_KEY") or "").strip()
     if not key:
         return None
     body = json.dumps({"model": model, "max_tokens": max_tokens, "system": system,

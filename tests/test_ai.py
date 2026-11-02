@@ -73,3 +73,21 @@ def test_writer_keeps_only_checked_posts(monkeypatch):
     good, rejected = ai.write_evergreen(CFG, POSTS, 2, [])
     assert [p["slug"] for p in good] == ["storing-fragrance"]
     assert len(rejected) == 1 and "47" in rejected[0]
+
+
+def test_pasted_key_with_newline_is_cleaned(monkeypatch):
+    seen = {}
+
+    class Resp:
+        def __enter__(self): return self
+        def __exit__(self, *a): pass
+        def read(self): return b'{"content":[{"type":"text","text":"ok"}]}'
+
+    def fake_urlopen(req, timeout=0):
+        seen["key"] = req.get_header("X-api-key")
+        return Resp()
+
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-test\n\n")
+    monkeypatch.setattr(ai.urllib.request, "urlopen", fake_urlopen)
+    assert ai.ask("hi", "claude-haiku-5-5") == "ok"
+    assert seen["key"] == "sk-test"
