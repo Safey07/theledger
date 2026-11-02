@@ -1,5 +1,7 @@
 <section class="emptystate">
   <p>Prices aren't live yet. We're adding UK retailers now, and fragrances appear here, checked every morning, as each one joins. <a href="{{ root }}how-we-track-prices.html">See how we track prices</a>.</p>
+  {% if amazon_tag %}<h2>Popular fragrances</h2>
+  <p>While retailer prices go live, browse well-known designer bottles on Amazon. <a class="btn" href="{{ root }}popular.html">See popular fragrances</a></p>{% endif %}
   {% if guides %}<h2>Read a buying guide while you wait</h2>
   <div class="guides">{% for g in guides %}<a class="guide" href="{{ root }}guides/{{ g.slug }}.html"><h3>{{ g.title }}</h3><p>{{ g.description }}</p></a>{% endfor %}</div>{% endif %}
   <h2>Follow for the first drops</h2>

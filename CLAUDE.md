@@ -18,8 +18,8 @@ UK designer and niche fragrance price-drop tracker. Live at https://theledgeruk.
 
 ## Affiliate status (Nov 2026)
 - Awin closed the account on 21 Oct 2026. Final. Its parser stays for Awin-format feeds.
-- Rakuten Advertising (The Fragrance Shop) application planned around 19 Nov 2026.
-- Amazon Associates UK is the interim route.
+- Rakuten Advertising: publisher account created 2 Nov 2026 (SID 4771128). The Fragrance Shop (MID 43488, 2% CPS, 30-day cookie) needs manual approval. Once approved, set the `RAKUTEN_FEED_URL` secret.
+- Amazon Associates UK is the interim route. Tag `theledgeruk-21`, set in `config.yaml` on 2 Nov 2026. Needs 3 qualifying sales for account review.
 
 ## Working method
 1. Read the relevant code before changing it.
