@@ -77,7 +77,7 @@ merchant_names:
 # Amazon Associates UK. Leave tag empty and no Amazon link appears anywhere on the site.
 # Links are Amazon search links (no prices shown: we only show prices we have tracked ourselves).
 amazon:
-  tag: ""                   # e.g. theledgeruk-21 (from Associates Central)
+  tag: "theledgeruk-21"     # Amazon Associates UK tracking ID (approved 2 Nov 2026)
   picks:                    # well-known designer bottles for the "Popular fragrances" page
     - {brand: "Dior", name: "Sauvage Eau de Toilette", g: "Men"}
     - {brand: "Chanel", name: "Bleu de Chanel Eau de Parfum", g: "Men"}
