@@ -52,6 +52,12 @@ jobs:
           git add content/evergreen.yaml
           git commit -m "New evergreen posts $(date -u +%F)"
           git push -u origin "$branch"
+          link="https://github.com/${GITHUB_REPOSITORY}/compare/main...${branch}?expand=1"
+          # Opening the PR needs "Allow GitHub Actions to create pull requests" in repo settings.
+          # Without it, the branch is still pushed and the link below opens the PR in one click.
           gh pr create --title "New evergreen posts $(date -u +%F)" \
             --body "Claude wrote these. Read the captions in the Files tab, edit anything, then merge to queue them. Close to reject." \
-            --base main --head "$branch"
+            --base main --head "$branch" \
+            || echo "Open the pull request here: $link"
+          echo "### New evergreen posts ready for review" >> "$GITHUB_STEP_SUMMARY"
+          echo "[Review and merge them here]($link)" >> "$GITHUB_STEP_SUMMARY"
