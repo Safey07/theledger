@@ -125,3 +125,13 @@ facebook:
 
 tiktok:
   autopost: true            # posts stay private until TikTok audits the app, then go public automatically
+
+# Claude API, paid from the Max plan's monthly API credits (ANTHROPIC_API_KEY secret).
+# AI writes words only. Prices, retailers and numbers always come from our own data,
+# and every AI text is checked before use. With no key, everything falls back to templates.
+ai:
+  enabled: true
+  caption_model: "claude-haiku-5-5"   # one-line hook on each price-drop Reel caption
+  writer_model: "claude-opus-5-5"     # weekly evergreen carousels (opened as a pull request)
+  evergreen_per_run: 7                # posts written per weekly run
+  evergreen_min_queue: 7              # only write when fewer than this are still unposted

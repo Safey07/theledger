@@ -1,0 +1,63 @@
+name: Weekly evergreen posts
+
+# Every Sunday, Claude writes new evergreen carousels when the queue runs low
+# and opens a pull request. Nothing goes live until the pull request is merged.
+# Paid from the Max plan's monthly API credits (ANTHROPIC_API_KEY secret).
+
+on:
+  schedule:
+    - cron: "41 18 * * 0"    # Sundays 18:41 UTC
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Write new posts even if the queue is full"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  write:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - run: pip install -r requirements.txt -r requirements-dev.txt
+
+      - name: Write new posts
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python write_evergreen.py ${{ github.event.inputs.force == 'true' && '--force' || '' }}
+
+      - name: Check they still parse and tests pass
+        run: |
+          python -c "import yaml; yaml.safe_load(open('content/evergreen.yaml'))"
+          python -m pytest -q tests
+
+      - name: Open a pull request for approval
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if git diff --quiet content/evergreen.yaml; then echo "No new posts."; exit 0; fi
+          branch="evergreen/$(date -u +%F)"
+          git config user.name "ledger-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git checkout -b "$branch"
+          git add content/evergreen.yaml
+          git commit -m "New evergreen posts $(date -u +%F)"
+          git push -u origin "$branch"
+          link="https://github.com/${GITHUB_REPOSITORY}/compare/main...${branch}?expand=1"
+          # Opening the PR needs "Allow GitHub Actions to create pull requests" in repo settings.
+          # Without it, the branch is still pushed and the link below opens the PR in one click.
+          gh pr create --title "New evergreen posts $(date -u +%F)" \
+            --body "Claude wrote these. Read the captions in the Files tab, edit anything, then merge to queue them. Close to reject." \
+            --base main --head "$branch" \
+            || echo "Open the pull request here: $link"
+          echo "### New evergreen posts ready for review" >> "$GITHUB_STEP_SUMMARY"
+          echo "[Review and merge them here]($link)" >> "$GITHUB_STEP_SUMMARY"
