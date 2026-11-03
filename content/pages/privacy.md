@@ -1,14 +1,15 @@
 title: Privacy policy
 description: What information The Ledger collects, how it is used, and your rights under UK data protection law.
 
-Last updated: 22 October 2026.
+Last updated: 4 November 2026.
 
 The Ledger is a UK fragrance price tracker. We keep the data we handle to a minimum.
 
 ## What we collect
 
 - **No accounts, no forms.** You can use the whole site without giving us any personal information.
-- **No tracking cookies.** The Ledger does not set advertising or analytics cookies.
+- **No tracking cookies.** The Ledger does not set advertising or analytics cookies, and stores nothing on your device.
+- **Anonymous visit statistics.** We use PostHog, hosted in the EU, in its cookieless mode to count page views and clicks through to retailers, and to spot pages that break. It does not use cookies or local storage, does not build a profile of you, and does not keep your IP address. We use these numbers only to improve the site. See [PostHog's privacy policy](https://posthog.com/privacy).
 - **Server logs.** The site is hosted on GitHub Pages. GitHub may log technical data such as IP addresses to keep the service secure. See [GitHub's privacy statement](https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement).
 - **Email.** If you email us, we use your message and address only to reply.
 
