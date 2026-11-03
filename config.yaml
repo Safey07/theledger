@@ -11,6 +11,10 @@ site:
   instagram: "theledgeruk.co"
   tiktok: "theledgeruk.co"
   facebook: "theledgeruk.co"
+  # PostHog analytics (EU Cloud, cookieless). The project token is public by design: it is
+  # embedded in every page and can only send events, never read them. Delete to turn analytics off.
+  posthog_key: "phc_D3fxUxceKoT2rMkfiwcnCs5synqM5cfD6KCz7yf6e7eY"
+  posthog_host: "https://eu.i.posthog.com"
 
 # Rules for what counts as a drop worth publishing
 detection:
