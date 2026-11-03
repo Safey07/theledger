@@ -11,12 +11,13 @@ from engine.video import reel_caption
 CFG = {"site": {"currency_symbol": "£"}, "ai": {"enabled": True}}
 DROP = {"brand": "Dior", "name": "Sauvage Eau de Parfum 100ml", "price": 79.0, "was": 99.0, "pct": 20,
         "merchant": "The Fragrance Shop", "all_time_low": False}
+TEST_SLUG = "zz-test-only-post"  # never a real slug, so new posts can't clash
 POSTS = yaml.safe_load(open(os.path.join(os.path.dirname(__file__), "..", "content", "evergreen.yaml")))
 
 
 def good_post():
     p = copy.deepcopy(next(p for p in POSTS if p["slug"] == "about"))
-    p["slug"] = "storing-fragrance"
+    p["slug"] = TEST_SLUG
     return p
 
 
@@ -72,7 +73,7 @@ def test_writer_keeps_only_checked_posts(monkeypatch):
     replies = iter(["```json\n" + json.dumps(good_post()) + "\n```", json.dumps(bad), json.dumps(bad)])
     monkeypatch.setattr(ai, "ask", lambda *a, **k: next(replies))
     good, rejected = ai.write_evergreen(CFG, POSTS, 2, [])
-    assert [p["slug"] for p in good] == ["storing-fragrance"]
+    assert [p["slug"] for p in good] == [TEST_SLUG]
     assert len(rejected) == 1 and "47" in rejected[0]
 
 
@@ -87,7 +88,7 @@ def test_writer_retries_with_feedback(monkeypatch):
         return json.dumps(bad if len(prompts) == 1 else good_post())
     monkeypatch.setattr(ai, "ask", fake)
     good, rejected = ai.write_evergreen(CFG, POSTS, 1, [])
-    assert [p["slug"] for p in good] == ["storing-fragrance"] and not rejected
+    assert [p["slug"] for p in good] == [TEST_SLUG] and not rejected
     assert "47" in prompts[1]
 
 
