@@ -18,8 +18,8 @@
       <p class="sub">at {{ p.merchant }}{% if p.ml %} &nbsp;·&nbsp; {{ site.currency_symbol }}{{ "%.2f"|format(p.price / p.ml * 10) }} per 10ml{% endif %}{% if p.low_30 is not none %} &nbsp;·&nbsp; 30-day low {{ site.currency_symbol }}{{ "%.2f"|format(p.low_30) }}{% endif %}{% if not stale %}<br>Price checked {{ checked }} UK time{% endif %}</p>
       {% if stale %}<p class="note">Price recorded on {{ stale }}. Our feeds didn't update today, so check {{ p.merchant }} for the current price.</p>{% endif %}
       {% if cheapest.id != p.id %}<p class="note">Cheaper{% if not stale %} today{% endif %}: <a href="{{ root }}p/{{ cheapest.slug }}.html">{{ site.currency_symbol }}{{ "%.2f"|format(cheapest.price) }} at {{ cheapest.merchant }}</a></p>{% endif %}
-      <a class="btn" href="{{ p.url }}" rel="sponsored nofollow noopener" target="_blank">Buy at {{ p.merchant }}</a>{% if amazon_tag %}
-      <a class="btn ghost" href="https://www.amazon.co.uk/s?k={{ (p.brand ~ ' ' ~ p.name)|urlencode }}&amp;tag={{ amazon_tag|urlencode }}" rel="sponsored nofollow noopener" target="_blank">Compare on Amazon</a>{% endif %}
+      <a class="btn" href="{{ p.url }}" rel="sponsored nofollow noopener" target="_blank">Buy at {{ p.merchant }} <span class="ad">(Ad)</span></a>{% if amazon_tag %}
+      <a class="btn ghost" href="https://www.amazon.co.uk/s?k={{ (p.brand ~ ' ' ~ p.name)|urlencode }}&amp;tag={{ amazon_tag|urlencode }}" rel="sponsored nofollow noopener" target="_blank">Compare on Amazon <span class="ad">(Ad)</span></a>{% endif %}
     </div>
     {% if p.notes %}
     <div class="scent">
@@ -33,7 +33,7 @@
       </dl>
     </div>
     {% endif %}
-    <p class="lede" style="font-size:13px;margin:0">We call a price a drop only when it is at least 10% and £5 below this bottle's own 30-day median. Links may earn us a commission.</p>
+    <p class="lede" style="font-size:13px;margin:0">We call a price a drop only when it is at least 10% and £5 below this bottle's own 30-day median. Links marked (Ad) are affiliate links: we earn a commission if you buy, at no extra cost to you.</p>
   </div>
 </div>
 
@@ -45,7 +45,7 @@
     <td>{{ o.merchant }}{% if loop.first %} <span class="tagbest">Cheapest</span>{% endif %}</td>
     <td><b>{{ site.currency_symbol }}{{ "%.2f"|format(o.price) }}</b></td>
     <td>{% if o.low_30 is not none %}{{ site.currency_symbol }}{{ "%.2f"|format(o.low_30) }}{% endif %}</td>
-    <td style="text-align:right"><a href="{{ o.url }}" rel="sponsored nofollow noopener" target="_blank">Shop →</a></td></tr>{% endfor %}</tbody>
+    <td style="text-align:right"><a href="{{ o.url }}" rel="sponsored nofollow noopener" target="_blank">Shop → <span class="ad">(Ad)</span></a></td></tr>{% endfor %}</tbody>
 </table>
 {% endif %}
 
