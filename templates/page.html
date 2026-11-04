@@ -12,5 +12,18 @@
 <ul>{% for g in related %}<li><a href="{{ g.slug }}.html">{{ g.title }}</a></li>{% endfor %}</ul>
 <p><a href="{{ root }}guides.html">All guides</a></p>{% endif %}
 </article>
+{% if page.slug == "privacy" %}<script>
+(function(){
+var K="ledger_analytics_optout", box=document.getElementById("analytics-optout");
+if(!box) return;
+function get(){ try { return localStorage.getItem(K)==="1"; } catch(e) { return false; } }
+function set(v){ try { if(v) localStorage.setItem(K,"1"); else localStorage.removeItem(K); return true; } catch(e) { return false; } }
+var msg=box.querySelector(".ao-status"), off=box.querySelector(".ao-off"), on=box.querySelector(".ao-on");
+function paint(){ var o=get(); off.hidden=o; on.hidden=!o; msg.textContent=o?"Analytics is off on this browser.":"Analytics is on. You can turn it off for this browser."; }
+off.addEventListener("click",function(){ if(!set(true)) msg.textContent="Your browser blocked the setting. Email us and we will help."; else paint(); });
+on.addEventListener("click",function(){ set(false); paint(); });
+box.hidden=false; paint();
+})();
+</script>{% endif %}
 {% if jsonld %}<script type="application/ld+json">{{ jsonld|safe }}</script>{% endif %}
 {% endblock %}

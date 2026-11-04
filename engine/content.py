@@ -96,7 +96,7 @@ def build_popular(tpl, common, cfg, out_dir, write):
         for x in items:
             parts.append(f'<li><span><b>{escape(x["brand"])}</b> {escape(x["name"])}</span> '
                          f'<a href="{escape(amazon_link(x["brand"], x["name"], tag))}" '
-                         f'rel="sponsored nofollow noopener" target="_blank">Check price on Amazon</a></li>')
+                         f'rel="sponsored nofollow noopener" target="_blank">Check price on Amazon <span class="ad">(Ad)</span></a></li>')
         parts.append("</ul>")
     page = {"title": "Popular designer fragrances in the UK",
             "description": "The designer perfumes and aftershaves UK buyers search for most, with links to check today's price."}
