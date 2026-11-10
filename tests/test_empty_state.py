@@ -29,3 +29,15 @@ def test_no_popular_link_without_amazon_tag(tmp_path):
     shop = (out / "shop.html").read_text()
     assert "See popular fragrances" not in shop
     assert not (out / "popular.html").exists()
+
+
+def test_homepage_points_to_popular_when_no_prices(tmp_path):
+    out = _build(tmp_path, "theledgeruk-21")
+    home = (out / "index.html").read_text()
+    assert "See popular fragrances" in home
+    assert 'href="popular.html"' in home
+
+
+def test_homepage_has_no_popular_block_without_amazon_tag(tmp_path):
+    out = _build(tmp_path, "")
+    assert "See popular fragrances" not in (out / "index.html").read_text()
