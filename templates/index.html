@@ -33,6 +33,14 @@
 <p class="empty">No significant drops today. <a href="{{ root }}shop.html">Browse every fragrance at today's lowest price</a>.</p>
 {% endif %}
 
+{% if not counts.all and amazon_tag %}
+<section aria-labelledby="popular">
+<h2 id="popular">Popular fragrances</h2>
+<p class="lede">While retailer prices go live, check today's price on the designer bottles UK buyers search for most. We don't show a price until we've tracked it ourselves.</p>
+<p><a class="btn" href="{{ root }}popular.html">See popular fragrances</a></p>
+</section>
+{% endif %}
+
 {% if signup_action %}
 <section class="signup">
   <div><h2>Get the drops by email</h2><p class="lede" style="margin:4px 0 0">One short email each morning. Unsubscribe any time.</p></div>
